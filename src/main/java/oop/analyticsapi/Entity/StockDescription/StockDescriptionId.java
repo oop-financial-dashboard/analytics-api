@@ -1,4 +1,4 @@
-package oop.analyticsapi.Entities.StockDescription;
+package oop.analyticsapi.Entity.StockDescription;
 
 import java.io.Serializable;
 

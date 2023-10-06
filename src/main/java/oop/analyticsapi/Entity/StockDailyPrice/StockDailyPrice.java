@@ -1,11 +1,11 @@
-package oop.analyticsapi.Entities.StockDailyPrice;
+package oop.analyticsapi.Entity.StockDailyPrice;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import oop.analyticsapi.Entities.StockDescription.StockDescriptionId;
+
 import java.sql.Timestamp;
 
 @Data

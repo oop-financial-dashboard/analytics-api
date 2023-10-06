@@ -1,4 +1,4 @@
-package oop.analyticsapi.Entities.StockDescription;
+package oop.analyticsapi.Entity.StockDescription;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

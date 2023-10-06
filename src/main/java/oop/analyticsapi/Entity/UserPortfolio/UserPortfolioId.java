@@ -1,4 +1,4 @@
-package oop.analyticsapi.Entities.UserPortfolio;
+package oop.analyticsapi.Entity.UserPortfolio;
 
 import java.io.Serializable;
 

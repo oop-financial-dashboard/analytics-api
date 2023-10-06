@@ -1,7 +1,9 @@
-package oop.analyticsapi.Entities.UserPortfolio;
+package oop.analyticsapi.Entity.UserPortfolio;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.sql.Timestamp;
 
 @Data
 @Builder
@@ -22,6 +24,11 @@ public class UserPortfolioEntity {
     @Column(name = "initial_capital")
     private Long initialCapital;
 
+    @Column(name = "start_time")
+    private Timestamp startTime;
+
+    @Column(name = "end_time")
+    private Timestamp endTime;
 }
 
 

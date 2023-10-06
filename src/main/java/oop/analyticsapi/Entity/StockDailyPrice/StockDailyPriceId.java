@@ -1,4 +1,4 @@
-package oop.analyticsapi.Entities.StockDailyPrice;
+package oop.analyticsapi.Entity.StockDailyPrice;
 
 import java.io.Serializable;
 
