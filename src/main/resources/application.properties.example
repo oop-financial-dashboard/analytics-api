@@ -1,0 +1,9 @@
+# TODO: Remember to change this later (temporarily disabling dependencies)
+spring.datasource.url=jdbc:postgresql://localhost:5432/
+spring.datasource.username=postgres
+spring.datasource.password=mypassword
+
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.properties.hibernate.format_sql=false
+
