@@ -20,11 +20,14 @@ public class PortfolioEntity {
 
     @Id
     @Column(name = "symbol")
-    private String ticker;
-
-    @Column(name = "exchange")
-    private String exchange;
+    private String symbol;
 
     @Column(name = "quantity")
     private Integer quantity;
+
+    @Column(name = "average_price")
+    private double averagePrice;
+
+    @Column(name = "total_value")
+    private double value;
 }

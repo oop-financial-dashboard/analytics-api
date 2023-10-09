@@ -1,20 +1,27 @@
 package oop.analyticsapi.Service.Interface;
 
 import oop.analyticsapi.Domain.Models.Stock;
-import oop.analyticsapi.Domain.Models.TotalValue;
-import oop.analyticsapi.Entity.Portfolio.PortfolioEntity;
-import org.springframework.http.ResponseEntity;
+import oop.analyticsapi.Entity.UserPortfolio.UserPortfolioEntity;
 
 import java.sql.Timestamp;
 import java.util.List;
+import java.util.Optional;
 
 public interface UserPortfolioServiceInterface {
-    ResponseEntity<List<PortfolioEntity>> getAllPortfoliosByUser(String userId);
-    ResponseEntity<String> createPortfolio(String userId, List<Stock> stocks);
-    ResponseEntity<String> deletePortfolio(String userId, String portfolioId);
-    //if user is using existing timeframe
-    ResponseEntity<TotalValue> getPortfolioValue(String portfolioId);
-    //if user is using new timeframe
-    ResponseEntity<TotalValue> getPortfolioValue(String portfolioId, Timestamp start, Timestamp end);
-    ResponseEntity<String> updatePortfolio(String portfolioId, Stock stocks, String action);
+    List<UserPortfolioEntity>getAllPortfoliosByUser(String userId);
+
+    String createNewPortfolio(String userId, String portfolioId, List<Stock> stocks, Timestamp createdAt);
+
+    String deletePortfolio(String userId, String portfolioId);
+
+    String updatePortfolio(
+            String userId,
+            String portfolioId,
+            String action,
+            Stock stock,
+            Timestamp editedAt,
+            Optional<Integer> addedQuantity
+    );
+
+
 }

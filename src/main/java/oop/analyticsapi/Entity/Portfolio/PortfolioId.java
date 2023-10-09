@@ -4,10 +4,10 @@ import java.io.Serializable;
 
 public class PortfolioId implements Serializable {
     private String portfolioId;
-    private String ticker;
+    private String symbol;
 
-    public PortfolioId(String portfolioId, String ticker) {
+    public PortfolioId(String portfolioId, String symbol) {
         this.portfolioId = portfolioId;
-        this.ticker = ticker;
+        this.symbol = symbol;
     }
 }

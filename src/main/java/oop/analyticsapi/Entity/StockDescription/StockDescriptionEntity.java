@@ -16,13 +16,14 @@ import lombok.NoArgsConstructor;
 public class StockDescriptionEntity {
     @Id
     @Column(name = "symbol")
-    private String ticker;
+    private String symbol;
 
     @Column(name = "exchange")
     private String exchange;
 
     @Column(name = "currency")
     private String currency;
+
     @Column(name = "asset_type")
     private String assetType;
 

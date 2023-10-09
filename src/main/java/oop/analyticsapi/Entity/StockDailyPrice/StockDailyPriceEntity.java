@@ -15,10 +15,10 @@ import java.sql.Timestamp;
 @Entity
 @IdClass(StockDailyPriceId.class)
 @Table(name = "stock_daily_price")
-public class StockDailyPrice {
+public class StockDailyPriceEntity {
     @Id
     @Column(name = "symbol")
-    private String ticker;
+    private String symbol;
 
     @Column(name = "date")
     private Timestamp date;

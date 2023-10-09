@@ -21,14 +21,8 @@ public class UserPortfolioEntity {
     @Column(name = "portfolio_id")
     private String portfolioId;
 
-    @Column(name = "initial_capital")
-    private Long initialCapital;
-
-    @Column(name = "start_time")
-    private Timestamp startTime;
-
-    @Column(name = "end_time")
-    private Timestamp endTime;
+    @Column(name = "creationAt")
+    private Timestamp createdAt;
 }
 
 

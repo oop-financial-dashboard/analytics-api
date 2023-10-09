@@ -3,10 +3,10 @@ package oop.analyticsapi.Entity.StockDescription;
 import java.io.Serializable;
 
 public class StockDescriptionId implements Serializable {
-    private String ticker;
+    private String symbol;
 
-    public StockDescriptionId(String ticker) {
-        this.ticker = ticker;
+    public StockDescriptionId(String symbol) {
+        this.symbol = symbol;
     }
 
 }

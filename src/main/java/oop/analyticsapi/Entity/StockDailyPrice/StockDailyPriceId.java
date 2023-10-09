@@ -3,9 +3,9 @@ package oop.analyticsapi.Entity.StockDailyPrice;
 import java.io.Serializable;
 
 public class StockDailyPriceId implements Serializable {
-    private String ticker;
+    private String symbol;
 
-    public StockDailyPriceId(String ticker) {
-        this.ticker = ticker;
+    public StockDailyPriceId(String symbol) {
+        this.symbol = symbol;
     }
 }
