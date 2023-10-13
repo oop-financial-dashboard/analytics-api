@@ -1,13 +1,11 @@
-package oop.analyticsapi.Repository.Interface;
+package oop.analyticsapi.Repository;
 
 import oop.analyticsapi.Entity.Portfolio.PortfolioEntity;
-import oop.analyticsapi.Entity.UserPortfolio.UserPortfolioEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface PortfolioRepositoryInterface extends JpaRepository<PortfolioEntity, Long> {
     @Query(value = """

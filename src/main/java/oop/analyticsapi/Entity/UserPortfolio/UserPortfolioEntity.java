@@ -11,7 +11,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @Entity
 @IdClass(UserPortfolioId.class)
-@Table(name = "user_portfolio")
+@Table(name = "user_portfolio", schema="public")
 public class UserPortfolioEntity {
     @Id
     @Column(name = "user_id")

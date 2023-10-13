@@ -1,4 +1,4 @@
-package oop.analyticsapi.Repository.Interface;
+package oop.analyticsapi.Repository;
 
 import oop.analyticsapi.Entity.StockDescription.StockDescriptionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,15 +1,16 @@
 package oop.analyticsapi.Service;
 
+import jakarta.transaction.Transactional;
 import lombok.Data;
 import oop.analyticsapi.Domain.Models.Stock;
 import oop.analyticsapi.Entity.Portfolio.PortfolioEntity;
 import oop.analyticsapi.Entity.StockDailyPrice.StockDailyPriceEntity;
 import oop.analyticsapi.Entity.UserPortfolio.UserPortfolioEntity;
-import oop.analyticsapi.Repository.Interface.PortfolioRepositoryInterface;
-import oop.analyticsapi.Repository.Interface.StockDailyPriceRepositoryInterface;
-import oop.analyticsapi.Repository.Interface.UserPortfolioRepositoryInterface;
+import oop.analyticsapi.Repository.PortfolioRepositoryInterface;
+import oop.analyticsapi.Repository.StockDailyPriceRepositoryInterface;
+import oop.analyticsapi.Repository.UserPortfolioRepositoryInterface;
 import oop.analyticsapi.Service.Interface.UserPortfolioServiceInterface;
-import oop.analyticsapi.enums.ActionEnum;
+import oop.analyticsapi.Enums.ActionEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +47,7 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
     }
 
     @Override
+    @Transactional
     public String createNewPortfolio(String userId, String portfolioId, List<Stock> stocks, Timestamp createdAt) throws NumberFormatException {
         //First insert new row in user_portfolio
         String res = "Success";
@@ -73,6 +75,7 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
     }
 
     @Override
+    @Transactional
     public String deletePortfolio(String userId, String portfolioId) {
         String res = "Success";
         int deleteUserPortfolioEntry = userPortfolioRepository.deleteUserPortfolioEntry(userId, portfolioId);
@@ -86,6 +89,7 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
     }
 
     @Override
+    @Transactional
     public String updatePortfolio(String userId, String portfolioId, String action, Stock stock, Timestamp editedAt,
                                   Optional<Integer> addedQuantity) {
         String res = "Success";
@@ -144,6 +148,7 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
         }
         return res;
     }
+
 
     private int insertPortfolioEntries(List<Stock> stocks, String portfolioId, Timestamp createdAt) {
         int portfolioRowChangeCount = 0;

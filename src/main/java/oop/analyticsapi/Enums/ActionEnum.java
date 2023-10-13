@@ -1,4 +1,4 @@
-package oop.analyticsapi.enums;
+package oop.analyticsapi.Enums;
 
 public enum ActionEnum {
     Add,
