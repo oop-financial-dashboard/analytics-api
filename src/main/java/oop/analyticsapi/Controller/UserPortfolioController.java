@@ -42,6 +42,7 @@ public class UserPortfolioController {
 
     @PostMapping("/portfolio/delete")
     public ResponseEntity<String> deletePortfolio(@RequestBody DeletePortfolioBody deletePortfolioBody) {
+        System.out.println(deletePortfolioBody.getUserId());
         String result = userPortfolioService.deletePortfolio(
                 deletePortfolioBody.getUserId(),
                 deletePortfolioBody.getPortfolioId()

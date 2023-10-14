@@ -6,9 +6,9 @@ import oop.analyticsapi.Domain.Models.Stock;
 import oop.analyticsapi.Entity.Portfolio.PortfolioEntity;
 import oop.analyticsapi.Entity.StockDailyPrice.StockDailyPriceEntity;
 import oop.analyticsapi.Entity.UserPortfolio.UserPortfolioEntity;
-import oop.analyticsapi.Repository.PortfolioRepositoryInterface;
-import oop.analyticsapi.Repository.StockDailyPriceRepositoryInterface;
-import oop.analyticsapi.Repository.UserPortfolioRepositoryInterface;
+import oop.analyticsapi.Repository.PortfolioRepository;
+import oop.analyticsapi.Repository.StockDailyPriceRepository;
+import oop.analyticsapi.Repository.UserPortfolioRepository;
 import oop.analyticsapi.Service.Interface.UserPortfolioServiceInterface;
 import oop.analyticsapi.Enums.ActionEnum;
 import org.slf4j.Logger;
@@ -25,16 +25,16 @@ import java.util.Optional;
 @Data
 @Service
 public class UserPortfolioService implements UserPortfolioServiceInterface {
-    private final PortfolioRepositoryInterface portfolioRepository;
-    private final StockDailyPriceRepositoryInterface stockDailyPriceRepository;
-    private final UserPortfolioRepositoryInterface userPortfolioRepository;
+    private final PortfolioRepository portfolioRepository;
+    private final StockDailyPriceRepository stockDailyPriceRepository;
+    private final UserPortfolioRepository userPortfolioRepository;
     private static final Logger logger = LoggerFactory.getLogger(UserPortfolioService.class);
 
     @Autowired
     public UserPortfolioService(
-            PortfolioRepositoryInterface portfolioRepository,
-            StockDailyPriceRepositoryInterface stockDailyPriceRepository,
-            UserPortfolioRepositoryInterface userPortfolioRepository
+            PortfolioRepository portfolioRepository,
+            StockDailyPriceRepository stockDailyPriceRepository,
+            UserPortfolioRepository userPortfolioRepository
     ) {
         this.portfolioRepository = portfolioRepository;
         this.stockDailyPriceRepository = stockDailyPriceRepository;
