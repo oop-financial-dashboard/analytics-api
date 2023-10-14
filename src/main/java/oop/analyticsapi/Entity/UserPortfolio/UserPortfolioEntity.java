@@ -3,7 +3,7 @@ package oop.analyticsapi.Entity.UserPortfolio;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
 
 @Data
 @Builder
@@ -22,7 +22,7 @@ public class UserPortfolioEntity {
     private String portfolioId;
 
     @Column(name = "created_at")
-    private Timestamp createdAt;
+    private LocalDate createdAt;
 }
 
 

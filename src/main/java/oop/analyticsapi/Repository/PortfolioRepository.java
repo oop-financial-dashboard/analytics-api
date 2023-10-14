@@ -48,5 +48,6 @@ public interface PortfolioRepository extends JpaRepository<PortfolioEntity, Long
                              @Param("quantity") int quantity,
                              @Param("symbol") String symbol,
                              @Param("averageCost")double averageCost,
-                             @Param("totalValue") double totalValue);
+                             @Param("totalValue") double totalValue
+    );
 }

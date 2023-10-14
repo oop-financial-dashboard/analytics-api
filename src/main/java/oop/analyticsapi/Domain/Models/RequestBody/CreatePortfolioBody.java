@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import oop.analyticsapi.Domain.Models.Stock;
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.List;
 
 @Builder
@@ -17,5 +17,5 @@ public class CreatePortfolioBody {
     private String userId;
     private String portfolioId;
     private List<Stock> stocks;
-    private Timestamp createdAt;
+    private LocalDate createdAt;
 }

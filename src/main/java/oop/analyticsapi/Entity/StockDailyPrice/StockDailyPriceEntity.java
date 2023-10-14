@@ -6,7 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
 
 @Data
 @Builder
@@ -21,7 +21,7 @@ public class StockDailyPriceEntity {
     private String symbol;
 
     @Column(name = "date")
-    private Timestamp date;
+    private LocalDate date;
 
     @Column(name = "open")
     private String open;

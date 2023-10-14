@@ -1,6 +1,5 @@
 package oop.analyticsapi.Repository;
 
-import jakarta.transaction.Transactional;
 import oop.analyticsapi.Entity.UserPortfolio.UserPortfolioEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -8,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface UserPortfolioRepository extends JpaRepository<UserPortfolioEntity, Long> {
@@ -25,7 +24,7 @@ public interface UserPortfolioRepository extends JpaRepository<UserPortfolioEnti
                     VALUES (:userId, :portfolioId, :createdAt)
             """, nativeQuery = true)
     int createUserPortfolioEntry(@Param("userId") String userId, @Param("portfolioId") String portfolioId,
-                                 @Param("createdAt")Timestamp createdAt);
+                                 @Param("createdAt") LocalDate createdAt);
 
     //Delete
    @Modifying

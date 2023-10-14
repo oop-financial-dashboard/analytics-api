@@ -16,8 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -48,7 +47,7 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
 
     @Override
     @Transactional
-    public String createNewPortfolio(String userId, String portfolioId, List<Stock> stocks, Timestamp createdAt) throws NumberFormatException {
+    public String createNewPortfolio(String userId, String portfolioId, List<Stock> stocks, LocalDate createdAt) throws NumberFormatException {
         //First insert new row in user_portfolio
         String res = "Success";
         int createUserPortfolioEntry = userPortfolioRepository.createUserPortfolioEntry(userId, portfolioId, createdAt);
@@ -61,9 +60,7 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
                         .build()
         );
 
-        LocalDateTime ldt = createdAt.toLocalDateTime();
-        ldt = ldt.minusDays(1);
-        Timestamp oneDayEarlier = Timestamp.valueOf(ldt);
+        LocalDate oneDayEarlier = createdAt.minusDays(1);
 
         int portfolioRowChangeCount = insertPortfolioEntries(stocks, portfolioId, oneDayEarlier);
 
@@ -90,14 +87,13 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
 
     @Override
     @Transactional
-    public String updatePortfolio(String userId, String portfolioId, String action, Stock stock, Timestamp editedAt,
+    public String updatePortfolio(String userId, String portfolioId, String action, Stock stock, LocalDate editedAt,
                                   Optional<Integer> addedQuantity) {
         String res = "Success";
         ActionEnum actionEnum = ActionEnum.getActionFromString(action);
 
-        LocalDateTime ldt = editedAt.toLocalDateTime();
-        ldt = ldt.minusDays(1);
-        Timestamp oneDayEarlier = Timestamp.valueOf(ldt);
+
+        LocalDate oneDayEarlier = editedAt.minusDays(1);
 
         switch (actionEnum) {
             case Add -> {
@@ -150,7 +146,7 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
     }
 
 
-    private int insertPortfolioEntries(List<Stock> stocks, String portfolioId, Timestamp createdAt) {
+    private int insertPortfolioEntries(List<Stock> stocks, String portfolioId, LocalDate createdAt) {
         int portfolioRowChangeCount = 0;
         List<PortfolioEntity> portfolioEntities = new ArrayList<>();
 

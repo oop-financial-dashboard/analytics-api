@@ -1,6 +1,6 @@
 package oop.analyticsapi.Domain.Models.RequestBody;
 
-import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,6 +17,6 @@ public class UpdatePortfolioBody {
     private String portfolioId;
     private String action;
     private Stock stock;
-    private Timestamp editedAt;
+    private LocalDate editedAt;
     private Optional<Integer> addedQuantity;
 }

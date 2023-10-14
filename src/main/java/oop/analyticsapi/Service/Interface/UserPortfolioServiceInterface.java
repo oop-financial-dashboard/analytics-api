@@ -3,14 +3,15 @@ package oop.analyticsapi.Service.Interface;
 import oop.analyticsapi.Domain.Models.Stock;
 import oop.analyticsapi.Entity.UserPortfolio.UserPortfolioEntity;
 
-import java.sql.Timestamp;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 public interface UserPortfolioServiceInterface {
     List<UserPortfolioEntity>getAllPortfoliosByUser(String userId);
 
-    String createNewPortfolio(String userId, String portfolioId, List<Stock> stocks, Timestamp createdAt);
+    String createNewPortfolio(String userId, String portfolioId, List<Stock> stocks, LocalDate createdAt);
 
     String deletePortfolio(String userId, String portfolioId);
 
@@ -19,7 +20,7 @@ public interface UserPortfolioServiceInterface {
             String portfolioId,
             String action,
             Stock stock,
-            Timestamp editedAt,
+            LocalDate editedAt,
             Optional<Integer> addedQuantity
     );
 
