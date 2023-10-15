@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface StockDailyPriceRepository extends JpaRepository<StockDailyPriceEntity, Long> {
     @Query("""
-        SELECT s FROM StockDailyPriceEntity s WHERE s.symbol = :symbol AND s.date = :timestamp
+        SELECT s FROM StockDailyPriceEntity s WHERE s.symbol = :symbol AND s.timestamp = :timestamp
     """)
     Optional<StockDailyPriceEntity> getStockDailyPriceBySymbol(@Param("symbol") String symbol,
                                                                @Param("timestamp") LocalDate timestamp);

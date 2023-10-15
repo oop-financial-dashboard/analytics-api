@@ -20,8 +20,8 @@ public class StockDailyPriceEntity {
     @Column(name = "symbol")
     private String symbol;
 
-    @Column(name = "date")
-    private LocalDate date;
+    @Column(name = "timestamp")
+    private LocalDate timestamp;
 
     @Column(name = "open")
     private String open;
