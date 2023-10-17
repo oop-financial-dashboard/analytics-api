@@ -1,11 +1,12 @@
 package oop.analyticsapi.Entity.StockDailyPrice;
 
-import java.io.Serializable;
+import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+import java.time.LocalDate;
+
+@NoArgsConstructor
 public class StockDailyPriceId implements Serializable {
     private String symbol;
-
-    public StockDailyPriceId(String symbol) {
-        this.symbol = symbol;
-    }
+    private LocalDate timestamp;
 }
