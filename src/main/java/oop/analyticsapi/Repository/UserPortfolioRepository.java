@@ -13,8 +13,8 @@ import java.util.List;
 public interface UserPortfolioRepository extends JpaRepository<UserPortfolioEntity, Long> {
    //Read
     @Query(value = """
-        SELECT * FROM UserPortfolioEntity p WHERE p.userId = :userId
-    """, nativeQuery = true)
+        SELECT p FROM UserPortfolioEntity p WHERE p.userId = :userId
+    """)
     List<UserPortfolioEntity> getAllPortfoliosByUserId(@Param("userId") String userId);
 
     //Create
