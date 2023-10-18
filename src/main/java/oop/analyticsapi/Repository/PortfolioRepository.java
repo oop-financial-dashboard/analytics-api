@@ -43,7 +43,7 @@ public interface PortfolioRepository extends JpaRepository<PortfolioEntity, Long
     @Query(value = """
        UPDATE PortfolioEntity SET quantity = :quantity, averageCost = :averageCost, totalValue = :totalValue
        WHERE portfolioId = :portfolioId AND symbol = :symbol
-       """, nativeQuery = true)
+       """)
     int updatePortfolioEntry(@Param("portfolioId") String portfolioId,
                              @Param("quantity") int quantity,
                              @Param("symbol") String symbol,

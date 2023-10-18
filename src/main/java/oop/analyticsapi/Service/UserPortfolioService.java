@@ -192,4 +192,5 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
 
         return res;
     }
+
 }
