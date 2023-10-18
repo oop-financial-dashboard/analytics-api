@@ -22,7 +22,7 @@ public interface UserPortfolioRepository extends JpaRepository<UserPortfolioEnti
     @Query(value = """
              INSERT INTO UserPortfolioEntity (userId, portfolioId, createdAt)
                     VALUES (:userId, :portfolioId, :createdAt)
-            """)
+            """, nativeQuery = true)
     int createUserPortfolioEntry(@Param("userId") String userId, @Param("portfolioId") String portfolioId,
                                  @Param("createdAt") LocalDate createdAt);
 

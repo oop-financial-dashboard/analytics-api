@@ -6,9 +6,7 @@ import oop.analyticsapi.Domain.Models.Stock;
 import oop.analyticsapi.Entity.Portfolio.PortfolioEntity;
 import oop.analyticsapi.Entity.StockDailyPrice.StockDailyPriceEntity;
 import oop.analyticsapi.Entity.UserPortfolio.UserPortfolioEntity;
-import oop.analyticsapi.Repository.PortfolioRepository;
-import oop.analyticsapi.Repository.StockDailyPriceRepository;
-import oop.analyticsapi.Repository.UserPortfolioRepository;
+import oop.analyticsapi.Repository.*;
 import oop.analyticsapi.Service.Interface.UserPortfolioServiceInterface;
 import oop.analyticsapi.Enums.ActionEnum;
 import org.slf4j.Logger;
@@ -16,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +26,8 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
     private final PortfolioRepository portfolioRepository;
     private final StockDailyPriceRepository stockDailyPriceRepository;
     private final UserPortfolioRepository userPortfolioRepository;
+    private UserPortfolio userPortfolio;
+    private Portfolio portfolio;
     private static final Logger logger = LoggerFactory.getLogger(UserPortfolioService.class);
 
     @Autowired
@@ -49,26 +50,17 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
     @Transactional
     public String createNewPortfolio(String userId, String portfolioId, List<Stock> stocks, LocalDate createdAt) throws NumberFormatException {
         //First insert new row in user_portfolio
-        String res = "Success";
-        int createUserPortfolioEntry = userPortfolioRepository.createUserPortfolioEntry(userId, portfolioId, createdAt);
-
-        userPortfolioRepository.save(UserPortfolioEntity
-                        .builder()
-                        .portfolioId(portfolioId)
-                        .userId(userId)
-                        .createdAt(createdAt)
-                        .build()
-        );
-
-        LocalDate oneDayEarlier = createdAt.minusDays(1);
-
-        int portfolioRowChangeCount = insertPortfolioEntries(stocks, portfolioId, oneDayEarlier);
-
-        if (createUserPortfolioEntry == 0
-            || portfolioRowChangeCount < stocks.size()) {
-            res = "Failed";
+        try {
+            UserPortfolio userPortfolio = new UserPortfolio();
+           String res = userPortfolio.createUserPortfolioRecord(userId, portfolioId, createdAt);
+           if (res.equals("Failed")) return res;
+           LocalDate oneDayEarlier = createdAt.minusDays(1);
+           String status = insertPortfolioEntries(stocks, portfolioId, oneDayEarlier);
+           if (status.equals("Failed")) return status;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
-        return res;
+        return "Success";
     }
 
     @Override
@@ -101,9 +93,8 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
                 List<Stock> stockArray = new ArrayList<>(1);
                 stockArray.add(stock);
 
-                int addPortfolioEntry = insertPortfolioEntries(stockArray, portfolioId, oneDayEarlier);
+                String addPortfolioEntry = insertPortfolioEntries(stockArray, portfolioId, oneDayEarlier);
 
-                if (addPortfolioEntry == 0) res = "Failed";
             }
             case Remove -> {
                 int deletePortfolioEntry = portfolioRepository.deletePortfolioEntry(portfolioId);
@@ -146,10 +137,7 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
     }
 
 
-    private int insertPortfolioEntries(List<Stock> stocks, String portfolioId, LocalDate createdAt) {
-        int portfolioRowChangeCount = 0;
-        List<PortfolioEntity> portfolioEntities = new ArrayList<>();
-
+    private String insertPortfolioEntries(List<Stock> stocks, String portfolioId, LocalDate createdAt) {
         for (Stock stock : stocks) {
             String symbol = stock.getSymbol();
             //Get price on creation of portfolio
@@ -159,27 +147,18 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
                 StockDailyPriceEntity stockData = stockPrice.get();
                 try {
                     int close = Integer.parseInt(stockData.getClose());
-                    long value = (long) quantity * close;
-                    int createPortfolioEntries = portfolioRepository.createPortfolioEntry(portfolioId, quantity, symbol, close, value);
-                    portfolioEntities.add(PortfolioEntity.builder()
-                            .portfolioId(portfolioId)
-                            .averagePrice(close)
-                            .symbol(symbol)
-                            .quantity(quantity)
-                            .value(value)
-                            .build());
-
-                    portfolioRowChangeCount += createPortfolioEntries;
+                    double value = (double) quantity * close;
+                    Portfolio portfolio = new Portfolio();
+                    return portfolio.createPortfolioRecord(portfolioId, quantity, symbol, close, value);
                 } catch (Exception e) {
                     logger.warn("Integer parse error!");
-                    throw e;
+                    return "Failed";
                 }
             } else {
                 logger.warn("No stock price data related to {} found!", symbol);
             }
         }
-        portfolioRepository.saveAll(portfolioEntities);
-        return portfolioRowChangeCount;
+        return "Failed";
     }
 
     private List<Double> recalculateAvgCost(String portfolioId, String symbol, int addedQuantity, double newPrice) {
