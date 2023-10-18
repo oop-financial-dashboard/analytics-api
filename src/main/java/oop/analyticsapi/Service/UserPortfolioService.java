@@ -26,7 +26,9 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
     private final PortfolioRepository portfolioRepository;
     private final StockDailyPriceRepository stockDailyPriceRepository;
     private final UserPortfolioRepository userPortfolioRepository;
+    @Autowired
     private UserPortfolio userPortfolio;
+    @Autowired
     private Portfolio portfolio;
     private static final Logger logger = LoggerFactory.getLogger(UserPortfolioService.class);
 
@@ -51,7 +53,6 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
     public String createNewPortfolio(String userId, String portfolioId, List<Stock> stocks, LocalDate createdAt) throws NumberFormatException {
         //First insert new row in user_portfolio
         try {
-            UserPortfolio userPortfolio = new UserPortfolio();
            String res = userPortfolio.createUserPortfolioRecord(userId, portfolioId, createdAt);
            if (res.equals("Failed")) return res;
            LocalDate oneDayEarlier = createdAt.minusDays(1);
@@ -146,19 +147,18 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
             if (stockPrice.isPresent()) {
                 StockDailyPriceEntity stockData = stockPrice.get();
                 try {
-                    int close = Integer.parseInt(stockData.getClose());
+                    double close = Double.parseDouble(stockData.getClose());
                     double value = (double) quantity * close;
-                    Portfolio portfolio = new Portfolio();
-                    return portfolio.createPortfolioRecord(portfolioId, quantity, symbol, close, value);
+                    portfolio.createPortfolioRecord(portfolioId, quantity, symbol, close, value);
                 } catch (Exception e) {
-                    logger.warn("Integer parse error!");
+                    logger.warn("Double parse error!");
                     return "Failed";
                 }
             } else {
                 logger.warn("No stock price data related to {} found!", symbol);
             }
         }
-        return "Failed";
+        return "Success";
     }
 
     private List<Double> recalculateAvgCost(String portfolioId, String symbol, int addedQuantity, double newPrice) {

@@ -1,12 +1,15 @@
 package oop.analyticsapi.Repository;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+@Component
 public class Portfolio {
+
     @Value("${spring.datasource.url}")
     private String db_url;
 
@@ -16,7 +19,7 @@ public class Portfolio {
     @Value("${spring.datasource.password}")
     private String password;
     private static final String INSERT_PORTFOLIO_SQL = "INSERT INTO portfolio" +
-                                                   "  (portfolioId, quantity, symbol, averageCost, totalValue) VALUES " +
+                                                   "  (portfolio_id, quantity, symbol, average_price, total_value) VALUES " +
                                                    " (?, ?, ?, ?, ?);";
 
     public String createPortfolioRecord(String portfolioId, int quantity, String symbol, double averageCost, double totalValue) throws SQLException {
@@ -36,6 +39,7 @@ public class Portfolio {
             return "Success";
         } catch (SQLException e) {
             // print SQL exception information
+            System.out.println(e.getMessage());
             System.out.println("Something went wrong!");
             return "Failed";
         }
