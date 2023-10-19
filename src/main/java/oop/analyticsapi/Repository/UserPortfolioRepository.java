@@ -17,15 +17,6 @@ public interface UserPortfolioRepository extends JpaRepository<UserPortfolioEnti
     """)
     List<UserPortfolioEntity> getAllPortfoliosByUserId(@Param("userId") String userId);
 
-    //Create
-    @Modifying
-    @Query(value = """
-             INSERT INTO UserPortfolioEntity (userId, portfolioId, createdAt)
-                    VALUES (:userId, :portfolioId, :createdAt)
-            """, nativeQuery = true)
-    int createUserPortfolioEntry(@Param("userId") String userId, @Param("portfolioId") String portfolioId,
-                                 @Param("createdAt") LocalDate createdAt);
-
     //Delete
    @Modifying
    @Query(value = """

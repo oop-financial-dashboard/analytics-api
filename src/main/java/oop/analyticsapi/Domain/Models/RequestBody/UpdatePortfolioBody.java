@@ -18,5 +18,4 @@ public class UpdatePortfolioBody {
     private String action;
     private Stock stock;
     private LocalDate editedAt;
-    private Optional<Integer> addedQuantity;
 }

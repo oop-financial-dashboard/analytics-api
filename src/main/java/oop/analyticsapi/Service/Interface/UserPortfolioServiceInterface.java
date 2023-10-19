@@ -1,6 +1,7 @@
 package oop.analyticsapi.Service.Interface;
 
 import oop.analyticsapi.Domain.Models.Stock;
+import oop.analyticsapi.Domain.ViewModel.AllPortfolios;
 import oop.analyticsapi.Entity.UserPortfolio.UserPortfolioEntity;
 
 
@@ -9,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserPortfolioServiceInterface {
-    List<UserPortfolioEntity>getAllPortfoliosByUser(String userId);
+    AllPortfolios getAllPortfoliosByUser(String userId);
 
     String createNewPortfolio(String userId, String portfolioId, List<Stock> stocks, LocalDate createdAt);
 
@@ -20,8 +21,7 @@ public interface UserPortfolioServiceInterface {
             String portfolioId,
             String action,
             Stock stock,
-            LocalDate editedAt,
-            Optional<Integer> addedQuantity
+            LocalDate editedAt
     );
 
 
