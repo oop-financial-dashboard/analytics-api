@@ -2,13 +2,17 @@ package oop.analyticsapi.Service;
 
 import jakarta.transaction.Transactional;
 import lombok.Data;
+import oop.analyticsapi.Domain.Models.Portfolio;
 import oop.analyticsapi.Domain.Models.Stock;
+import oop.analyticsapi.Domain.ViewModel.AllPortfolios;
 import oop.analyticsapi.Entity.Portfolio.PortfolioEntity;
 import oop.analyticsapi.Entity.StockDailyPrice.StockDailyPriceEntity;
 import oop.analyticsapi.Entity.UserPortfolio.UserPortfolioEntity;
 import oop.analyticsapi.Repository.*;
 import oop.analyticsapi.Service.Interface.UserPortfolioServiceInterface;
 import oop.analyticsapi.Enums.ActionEnum;
+import org.antlr.v4.runtime.misc.Triple;
+import org.javatuples.Triplet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Data
 @Service
@@ -27,9 +29,9 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
     private final StockDailyPriceRepository stockDailyPriceRepository;
     private final UserPortfolioRepository userPortfolioRepository;
     @Autowired
-    private UserPortfolio userPortfolio;
+    private UserPortfolioTransactional userPortfolio;
     @Autowired
-    private Portfolio portfolio;
+    private PortfolioTransactional portfolio;
     private static final Logger logger = LoggerFactory.getLogger(UserPortfolioService.class);
 
     @Autowired
@@ -44,8 +46,23 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
     }
 
     @Override
-    public List<UserPortfolioEntity> getAllPortfoliosByUser(String userId) {
-        return userPortfolioRepository.getAllPortfoliosByUserId(userId);
+    public AllPortfolios getAllPortfoliosByUser(String userId) {
+        Map<String, Portfolio> portfolios = new HashMap<>();
+        List<UserPortfolioEntity> portfolioIds = userPortfolioRepository.getAllPortfoliosByUserId(userId);
+        for (UserPortfolioEntity pid: portfolioIds) {
+            List<PortfolioEntity> stocks = portfolioRepository.getAllStocksInPortfolio(pid.getPortfolioId());
+            Portfolio pf = Portfolio.builder()
+                    .stocks(stocks)
+                    .createdAt(pid.getCreatedAt())
+                    .build();
+
+            portfolios.put(pid.getPortfolioId(), pf);
+        }
+
+        return AllPortfolios.builder()
+                .userId(userId)
+                .portfolios(portfolios)
+                .build();
     }
 
     @Override
@@ -80,12 +97,9 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
 
     @Override
     @Transactional
-    public String updatePortfolio(String userId, String portfolioId, String action, Stock stock, LocalDate editedAt,
-                                  Optional<Integer> addedQuantity) {
+    public String updatePortfolio(String userId, String portfolioId, String action, Stock stock, LocalDate editedAt) {
         String res = "Success";
         ActionEnum actionEnum = ActionEnum.getActionFromString(action);
-
-
         LocalDate oneDayEarlier = editedAt.minusDays(1);
 
         switch (actionEnum) {
@@ -93,44 +107,28 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
                 //Hack
                 List<Stock> stockArray = new ArrayList<>(1);
                 stockArray.add(stock);
-
-                String addPortfolioEntry = insertPortfolioEntries(stockArray, portfolioId, oneDayEarlier);
-
+                //Add new portfolio entry (non-existing stock)
+                res = insertPortfolioEntries(stockArray, portfolioId, oneDayEarlier);
             }
             case Remove -> {
                 int deletePortfolioEntry = portfolioRepository.deletePortfolioEntry(portfolioId);
                 if (deletePortfolioEntry == 0) res = "Failed";
-
-                portfolioRepository.save(
-                        PortfolioEntity
-                                .builder()
-                                .portfolioId(portfolioId)
-                                .symbol(stock.getSymbol())
-                                .build()
-                );
             }
             case Increase -> {
                 try {
-                    if (addedQuantity.isPresent()) {
-                        int quantity = addedQuantity.get();
                         //Get new price
                         Optional<StockDailyPriceEntity> stockData = stockDailyPriceRepository.getStockDailyPriceBySymbol(stock.getSymbol(), oneDayEarlier);
                         if (stockData.isPresent()) {
-                            int stockPrice = Integer.parseInt(stockData.get().getClose());
-                            List<Double> newAvgCost = recalculateAvgCost(portfolioId, stock.getSymbol(), quantity, stockPrice);
-                            int increasePortfolioEntry = portfolioRepository.updatePortfolioEntry(portfolioId, quantity, stock.getSymbol(),
-                                    newAvgCost.get(1), newAvgCost.get(0));
-
-                            if (increasePortfolioEntry == 0) res = "Failed";
+                            double stockPrice = Double.parseDouble(stockData.get().getClose());
+                            Triplet<Integer, Double, Double> data = recalculateAvgCost(portfolioId, stock.getSymbol(), stock.getQuantity(), stockPrice);
+                            res = portfolio.updatePortfolioRecords(portfolioId, data.getValue0(), stock.getSymbol(),
+                                    data.getValue1(), data.getValue2());
                         } else {
                             logger.warn("No stock data found for {}", stock.getSymbol());
                         }
-                    } else {
-                        logger.warn("Invalid Params: No Quantity found");
-                    }
+
                 } catch (Exception e) {
-                    logger.warn("Parse Int error!");
-                    throw e;
+                    logger.warn("Parse Double error!");
                 }
             }
         }
@@ -161,15 +159,13 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
         return "Success";
     }
 
-    private List<Double> recalculateAvgCost(String portfolioId, String symbol, int addedQuantity, double newPrice) {
-        List<Double> res = new ArrayList<>(2);
+    private Triplet<Integer, Double, Double> recalculateAvgCost(String portfolioId, String symbol, int addedQuantity, double newPrice) {
         PortfolioEntity existingStockData = portfolioRepository.getOneStockInfo(portfolioId, symbol);
-
         double newTotalValue = (addedQuantity * newPrice) + existingStockData.getValue();
-        res.add(newTotalValue);
-        res.add((newTotalValue / (addedQuantity + existingStockData.getQuantity())));
+        int totalQty = addedQuantity + existingStockData.getQuantity();
+        double newAvg = (newTotalValue / totalQty);
 
-        return res;
+        return Triplet.with(totalQty,newAvg, newTotalValue);
     }
 
 }

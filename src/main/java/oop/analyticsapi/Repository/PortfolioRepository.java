@@ -21,18 +21,6 @@ public interface PortfolioRepository extends JpaRepository<PortfolioEntity, Long
 
     @Modifying
     @Query(value = """
-           INSERT INTO PortfolioEntity (portfolioId, quantity, symbol, averageCost, totalValue)
-           VALUES (:portfolioId, :quantity, :symbol, :averageCost, :totalValue);
-    """, nativeQuery = true)
-    int createPortfolioEntry(@Param("portfolioId") String portfolioId,
-                             @Param("quantity") int quantity,
-                             @Param("symbol") String symbol,
-                             @Param("averageCost") double averageCost,
-                             @Param("totalValue") Long totalValue
-    );
-
-    @Modifying
-    @Query(value = """
          DELETE FROM PortfolioEntity WHERE portfolioId = :portfolioId
          """)
     int deletePortfolioEntry(@Param("portfolioId") String portfolioId);

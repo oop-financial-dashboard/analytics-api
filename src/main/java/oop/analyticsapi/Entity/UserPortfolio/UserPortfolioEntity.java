@@ -15,6 +15,7 @@ import java.time.LocalDate;
 @Table(name = "user_portfolio")
 public class UserPortfolioEntity {
 
+    @Id
     @Column(name = "user_id")
     private String userId;
 
@@ -23,7 +24,7 @@ public class UserPortfolioEntity {
     private String portfolioId;
 
     @Column(name = "created_at")
-    private Date createdAt;
+    private LocalDate createdAt;
 }
 
 

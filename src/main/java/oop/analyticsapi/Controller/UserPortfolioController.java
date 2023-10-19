@@ -3,6 +3,7 @@ package oop.analyticsapi.Controller;
 import oop.analyticsapi.Domain.Models.RequestBody.CreatePortfolioBody;
 import oop.analyticsapi.Domain.Models.RequestBody.DeletePortfolioBody;
 import oop.analyticsapi.Domain.Models.RequestBody.UpdatePortfolioBody;
+import oop.analyticsapi.Domain.ViewModel.AllPortfolios;
 import oop.analyticsapi.Entity.UserPortfolio.UserPortfolioEntity;
 import oop.analyticsapi.Enums.ActionEnum;
 import oop.analyticsapi.Service.UserPortfolioService;
@@ -35,8 +36,8 @@ public class UserPortfolioController {
     }
 
     @GetMapping("/portfolio/get-all/{userId}")
-    public ResponseEntity<List<UserPortfolioEntity>> getByUser(@PathVariable String userId) {
-        List<UserPortfolioEntity> result = userPortfolioService.getAllPortfoliosByUser(userId);
+    public ResponseEntity<AllPortfolios> getByUser(@PathVariable String userId) {
+        AllPortfolios result = userPortfolioService.getAllPortfoliosByUser(userId);
         return ResponseEntity.ok(result);
     }
 
@@ -54,26 +55,18 @@ public class UserPortfolioController {
 
     @PostMapping("/portfolio/update")
     public ResponseEntity<String> updatePortfolio(@RequestBody UpdatePortfolioBody updatePortfolioBody) {
-        ActionEnum action = ActionEnum
-                .getActionFromString(updatePortfolioBody.getAction());
 
-        if (action == ActionEnum.Add
-            && updatePortfolioBody.getAddedQuantity().isEmpty()) {
-            return ResponseEntity.badRequest().body("Missing addedQuantity field.");
-        }
         try {
             String result = userPortfolioService.updatePortfolio(
                     updatePortfolioBody.getUserId(),
                     updatePortfolioBody.getPortfolioId(),
                     updatePortfolioBody.getAction(),
                     updatePortfolioBody.getStock(),
-                    updatePortfolioBody.getEditedAt(),
-                    //Should never be null
-                    updatePortfolioBody.getAddedQuantity()
+                    updatePortfolioBody.getEditedAt()
             );
             if (result.equals("Failed")) return ResponseEntity.internalServerError().body("Something went wrong!");
         } catch(NullPointerException e) {
-            return ResponseEntity.badRequest().body("Missing addedQuantity field.");
+            return ResponseEntity.badRequest().body("Missing field.");
         }
 
         return ResponseEntity.ok("Successfully updated portfolio");

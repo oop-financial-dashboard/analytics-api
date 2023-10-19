@@ -20,7 +20,12 @@ public class StockPriceService implements StockPriceInterface {
 
     @Override
     public Optional<StockDailyPriceEntity> getCurrentStockPrice(String symbol, LocalDate timestamp) {
-        LocalDate oneDayEarlier = timestamp.minusDays(1);
-        return stockDailyPriceRepository.getStockDailyPriceBySymbol(symbol, oneDayEarlier);
+        LocalDate today = LocalDate.now();
+        if (today.equals(timestamp)) {
+            //minus 1 day bc we dh current day data
+            LocalDate oneDayEarlier = timestamp.minusDays(1);
+            return stockDailyPriceRepository.getStockDailyPriceBySymbol(symbol, oneDayEarlier);
+        }
+        return stockDailyPriceRepository.getStockDailyPriceBySymbol(symbol, timestamp);
     }
 }

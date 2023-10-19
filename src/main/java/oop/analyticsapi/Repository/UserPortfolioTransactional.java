@@ -1,14 +1,13 @@
 package oop.analyticsapi.Repository;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
 import java.time.LocalDate;
 
 @Component
-public class UserPortfolio {
+public class UserPortfolioTransactional {
 
     @Value("${spring.datasource.url}")
     private String db_url;
