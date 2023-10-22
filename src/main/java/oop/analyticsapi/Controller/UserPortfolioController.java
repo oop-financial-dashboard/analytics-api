@@ -4,14 +4,11 @@ import oop.analyticsapi.Domain.Models.RequestBody.CreatePortfolioBody;
 import oop.analyticsapi.Domain.Models.RequestBody.DeletePortfolioBody;
 import oop.analyticsapi.Domain.Models.RequestBody.UpdatePortfolioBody;
 import oop.analyticsapi.Domain.ViewModel.AllPortfolios;
-import oop.analyticsapi.Entity.UserPortfolio.UserPortfolioEntity;
-import oop.analyticsapi.Enums.ActionEnum;
 import oop.analyticsapi.Service.UserPortfolioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 public class UserPortfolioController {
