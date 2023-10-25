@@ -18,18 +18,19 @@ public class UserPortfolioTransactional {
     @Value("${spring.datasource.password}")
     private String password;
     private static final String INSERT_USERS_SQL = "INSERT INTO user_portfolio" +
-                                                   " (user_id, portfolio_id, created_at) VALUES " +
-                                                   " (?, ?, ?);";
+                                                   " (user_id, portfolio_id, description, inital_capital, created_at) VALUES " +
+                                                   " (?, ?, ?, ?, ?);";
 
-    public String createUserPortfolioRecord(String userId, String portfolioId, LocalDate createdAt) throws SQLException {
+    public String createUserPortfolioRecord(String userId, String portfolioId, String description, Double initialCapital, LocalDate createdAt) throws SQLException {
         // Step 1: Establishing a Connection
         try (Connection connection = DriverManager.getConnection(db_url, user, password);
              // Step 2:Create a statement using connection object
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT_USERS_SQL)) {
             preparedStatement.setString(1, userId);
             preparedStatement.setString(2, portfolioId);
-            System.out.println(java.sql.Date.valueOf(createdAt));
-            preparedStatement.setDate(3, java.sql.Date.valueOf(createdAt));
+            preparedStatement.setString(3, description);
+            preparedStatement.setDouble(4, initialCapital);
+            preparedStatement.setDate(5, java.sql.Date.valueOf(createdAt));
 
             System.out.println(preparedStatement);
             // Step 3: Execute the query or update query

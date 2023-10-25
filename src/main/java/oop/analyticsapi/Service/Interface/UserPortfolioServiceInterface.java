@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface UserPortfolioServiceInterface {
     AllPortfolios getAllPortfoliosByUser(String userId);
 
-    String createNewPortfolio(String userId, String portfolioId, List<Stock> stocks, LocalDate createdAt);
+    String createNewPortfolio(String userId, String portfolioId, List<Stock> stocks, String description, Double initialCapital, LocalDate createdAt);
 
     String deletePortfolio(String userId, String portfolioId);
 

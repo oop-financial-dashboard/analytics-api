@@ -23,6 +23,11 @@ public class UserPortfolioEntity {
     @Column(name = "portfolio_id")
     private String portfolioId;
 
+    private String description;
+
+    @Column(name = "initialCapital")
+    private String initialCapital;
+
     @Column(name = "created_at")
     private LocalDate createdAt;
 }

@@ -25,6 +25,8 @@ public class UserPortfolioController {
                 createPortfolioBody.getUserId(),
                 createPortfolioBody.getPortfolioId(),
                 createPortfolioBody.getStocks(),
+                createPortfolioBody.getDescription(),
+                createPortfolioBody.getInitialCapital(),
                 createPortfolioBody.getCreatedAt()
         );
         if (result.equals("Failed")) return ResponseEntity.internalServerError().body("Something went wrong!");

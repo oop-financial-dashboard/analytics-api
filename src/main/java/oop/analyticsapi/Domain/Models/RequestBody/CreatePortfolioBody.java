@@ -16,6 +16,8 @@ import java.util.List;
 public class CreatePortfolioBody {
     private String userId;
     private String portfolioId;
+    private String description;
+    private Double initialCapital;
     private List<Stock> stocks;
     private LocalDate createdAt;
 }

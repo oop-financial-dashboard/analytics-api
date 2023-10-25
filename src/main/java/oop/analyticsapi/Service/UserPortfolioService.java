@@ -67,10 +67,10 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
 
     @Override
     @Transactional
-    public String createNewPortfolio(String userId, String portfolioId, List<Stock> stocks, LocalDate createdAt) throws NumberFormatException {
+    public String createNewPortfolio(String userId, String portfolioId, List<Stock> stocks, String description, Double initialCapital, LocalDate createdAt) throws NumberFormatException {
         //First insert new row in user_portfolio
         try {
-           String res = userPortfolio.createUserPortfolioRecord(userId, portfolioId, createdAt);
+           String res = userPortfolio.createUserPortfolioRecord(userId, portfolioId, description, initialCapital, createdAt);
            if (res.equals("Failed")) return res;
            LocalDate oneDayEarlier = createdAt.minusDays(1);
            String status = insertPortfolioEntries(stocks, portfolioId, oneDayEarlier);
