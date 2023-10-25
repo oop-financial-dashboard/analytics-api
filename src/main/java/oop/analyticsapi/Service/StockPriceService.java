@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -27,5 +28,10 @@ public class StockPriceService implements StockPriceInterface {
             return stockDailyPriceRepository.getStockDailyPriceBySymbol(symbol, oneDayEarlier);
         }
         return stockDailyPriceRepository.getStockDailyPriceBySymbol(symbol, timestamp);
+    }
+
+    @Override
+    public List<StockDailyPriceEntity> getStockHistoricals(String symbol, LocalDate from, Integer days) {
+        return stockDailyPriceRepository.getStockHistoricals(symbol, from, days);
     }
 }

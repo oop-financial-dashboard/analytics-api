@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 public interface StockDailyPriceRepository extends JpaRepository<StockDailyPriceEntity, Long> {
@@ -14,4 +15,10 @@ public interface StockDailyPriceRepository extends JpaRepository<StockDailyPrice
     """)
     Optional<StockDailyPriceEntity> getStockDailyPriceBySymbol(@Param("symbol") String symbol,
                                                                @Param("timestamp") LocalDate timestamp);
+
+    @Query("""
+        SELECT s FROM StockDailyPriceEntity s WHERE s.symbol = :symbol AND s.timestamp <= :from AND s.timestamp > DATE_SUB(:from, :days)
+        ORDER BY s.timestamp DESC
+    """)
+    List<StockDailyPriceEntity> getStockHistoricals(@Param("symbol") String symbol, @Param("from") LocalDate from, @Param("days") Integer days);
 }
