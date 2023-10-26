@@ -13,6 +13,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @IdClass(StockDescriptionId.class)
 @Table(name = "stock_description")
+//@Table(name = "temp_desc")
 public class StockDescriptionEntity {
     @Id
     private String symbol;

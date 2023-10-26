@@ -25,6 +25,12 @@ public interface PortfolioRepository extends JpaRepository<PortfolioEntity, Long
          """)
     int deletePortfolioEntry(@Param("portfolioId") String portfolioId);
 
+    @Modifying
+    @Query(value = """
+         DELETE FROM PortfolioEntity WHERE portfolioId = :portfolioId AND symbol = :symbol
+         """)
+    int deleteOnePortfolioEntry(@Param("portfolioId") String portfolioId, @Param("symbol") String symbol);
+
     //Update
     //For updating values/quantity/avg cost
     @Modifying

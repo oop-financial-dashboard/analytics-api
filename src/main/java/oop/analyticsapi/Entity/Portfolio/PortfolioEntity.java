@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -30,4 +32,7 @@ public class PortfolioEntity {
 
     @Column(name = "total_value")
     private double value;
+
+    @Column(name = "date_added")
+    private LocalDate dateAdded;
 }

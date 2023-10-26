@@ -49,7 +49,7 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
     public AllPortfolios getAllPortfoliosByUser(String userId) {
         Map<String, Portfolio> portfolios = new HashMap<>();
         List<UserPortfolioEntity> portfolioIds = userPortfolioRepository.getAllPortfoliosByUserId(userId);
-        for (UserPortfolioEntity pid: portfolioIds) {
+        for (UserPortfolioEntity pid : portfolioIds) {
             List<PortfolioEntity> stocks = portfolioRepository.getAllStocksInPortfolio(pid.getPortfolioId());
             Portfolio pf = Portfolio.builder()
                     .stocks(stocks)
@@ -70,11 +70,11 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
     public String createNewPortfolio(String userId, String portfolioId, List<Stock> stocks, String description, Double initialCapital, LocalDate createdAt) throws NumberFormatException {
         //First insert new row in user_portfolio
         try {
-           String res = userPortfolio.createUserPortfolioRecord(userId, portfolioId, description, initialCapital, createdAt);
-           if (res.equals("Failed")) return res;
-           LocalDate oneDayEarlier = createdAt.minusDays(1);
-           String status = insertPortfolioEntries(stocks, portfolioId, oneDayEarlier);
-           if (status.equals("Failed")) return status;
+            String res = userPortfolio.createUserPortfolioRecord(userId, portfolioId, description, initialCapital, createdAt);
+            if (res.equals("Failed")) return res;
+//            LocalDate oneDayEarlier = createdAt.minusDays(1);
+            String status = insertPortfolioEntries(stocks, portfolioId);
+            if (status.equals("Failed")) return status;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -88,7 +88,7 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
         int deleteUserPortfolioEntry = userPortfolioRepository.deleteUserPortfolioEntry(userId, portfolioId);
         int deletePortfolioEntries = portfolioRepository.deletePortfolioEntry(portfolioId);
         if (deleteUserPortfolioEntry == 0
-            || deletePortfolioEntries == 0) {
+                || deletePortfolioEntries == 0) {
             res = "Failed";
             logger.warn("Failed to delete portfolio!");
         }
@@ -100,7 +100,7 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
     public String updatePortfolio(String userId, String portfolioId, String action, Stock stock, LocalDate editedAt) {
         String res = "Success";
         ActionEnum actionEnum = ActionEnum.getActionFromString(action);
-        LocalDate oneDayEarlier = editedAt.minusDays(1);
+//        LocalDate oneDayEarlier = editedAt.minusDays(1);
 
         switch (actionEnum) {
             case Add -> {
@@ -108,52 +108,42 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
                 List<Stock> stockArray = new ArrayList<>(1);
                 stockArray.add(stock);
                 //Add new portfolio entry (non-existing stock)
-                res = insertPortfolioEntries(stockArray, portfolioId, oneDayEarlier);
+                res = insertPortfolioEntries(stockArray, portfolioId);
             }
             case Remove -> {
-                int deletePortfolioEntry = portfolioRepository.deletePortfolioEntry(portfolioId);
+                int deletePortfolioEntry = portfolioRepository.deleteOnePortfolioEntry(portfolioId, stock.getSymbol());
                 if (deletePortfolioEntry == 0) res = "Failed";
             }
             case Increase -> {
-                try {
-                        //Get new price
-                        Optional<StockDailyPriceEntity> stockData = stockDailyPriceRepository.getStockDailyPriceBySymbol(stock.getSymbol(), oneDayEarlier);
-                        if (stockData.isPresent()) {
-                            double stockPrice = Double.parseDouble(stockData.get().getClose());
-                            Triplet<Integer, Double, Double> data = recalculateAvgCost(portfolioId, stock.getSymbol(), stock.getQuantity(), stockPrice);
-                            res = portfolio.updatePortfolioRecords(portfolioId, data.getValue0(), stock.getSymbol(),
-                                    data.getValue1(), data.getValue2());
-                        } else {
-                            logger.warn("No stock data found for {}", stock.getSymbol());
-                        }
-
-                } catch (Exception e) {
-                    logger.warn("Parse Double error!");
-                }
+                    //Get new price
+                    double stockPrice = stock.getPrice();
+                    Triplet<Integer, Double, Double> data = recalculateAvgCost(portfolioId, stock.getSymbol(), stock.getQuantity(), stockPrice);
+                    try {
+                        res = portfolio.updatePortfolioRecords(portfolioId, data.getValue0(), stock.getSymbol(),
+                                data.getValue1(), data.getValue2());
+                    } catch (SQLException e) {
+                        logger.warn("Something went wrong with updatePortfolioRecords");
+                    }
             }
         }
         return res;
     }
 
 
-    private String insertPortfolioEntries(List<Stock> stocks, String portfolioId, LocalDate createdAt) {
+
+    private String insertPortfolioEntries(List<Stock> stocks, String portfolioId) {
         for (Stock stock : stocks) {
             String symbol = stock.getSymbol();
             //Get price on creation of portfolio
             int quantity = stock.getQuantity();
-            Optional<StockDailyPriceEntity> stockPrice = stockDailyPriceRepository.getStockDailyPriceBySymbol(symbol, createdAt);
-            if (stockPrice.isPresent()) {
-                StockDailyPriceEntity stockData = stockPrice.get();
-                try {
-                    double close = Double.parseDouble(stockData.getClose());
-                    double value = (double) quantity * close;
-                    portfolio.createPortfolioRecord(portfolioId, quantity, symbol, close, value);
-                } catch (Exception e) {
-                    logger.warn("Double parse error!");
-                    return "Failed";
-                }
-            } else {
-                logger.warn("No stock price data related to {} found!", symbol);
+            double price = stock.getPrice();
+            double totalValue = price * quantity;
+            LocalDate dateAdded = stock.getDateAdded();
+            try {
+                portfolio.createPortfolioRecord(portfolioId, quantity, symbol, price, totalValue, dateAdded);
+            } catch (Exception e) {
+                logger.warn("Double parse error!");
+                return "Failed";
             }
         }
         return "Success";
@@ -165,7 +155,7 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
         int totalQty = addedQuantity + existingStockData.getQuantity();
         double newAvg = (newTotalValue / totalQty);
 
-        return Triplet.with(totalQty,newAvg, newTotalValue);
+        return Triplet.with(totalQty, newAvg, newTotalValue);
     }
 
 }
