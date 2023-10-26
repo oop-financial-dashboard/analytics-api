@@ -19,7 +19,7 @@ public class StockListing {
     @Id
     private String symbol;
     private String name;
-    @Column(name = "last_indexed_at")
-    private LocalDate lastIndexedAt;
+    @Column(name = "last_indexed_date")
+    private LocalDate lastIndexedDate;
 
 }
