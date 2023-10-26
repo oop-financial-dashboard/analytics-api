@@ -17,8 +17,8 @@ public interface StockDailyPriceRepository extends JpaRepository<StockDailyPrice
                                                                @Param("timestamp") LocalDate timestamp);
 
     @Query("""
-        SELECT s FROM StockDailyPriceEntity s WHERE s.symbol = :symbol AND s.timestamp <= :from AND s.timestamp > DATE_SUB(:from, :days)
+        SELECT s FROM StockDailyPriceEntity s WHERE s.symbol = :symbol AND s.timestamp <= :from AND s.timestamp > :minusFrom
         ORDER BY s.timestamp DESC
     """)
-    List<StockDailyPriceEntity> getStockHistoricals(@Param("symbol") String symbol, @Param("from") LocalDate from, @Param("days") Integer days);
+    List<StockDailyPriceEntity> getStockHistoricals(@Param("symbol") String symbol, @Param("from") LocalDate from, @Param("minusFrom") LocalDate minusFrom);
 }
