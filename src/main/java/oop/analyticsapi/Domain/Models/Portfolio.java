@@ -16,4 +16,6 @@ import java.util.List;
 public class Portfolio {
     private List<PortfolioEntity> stocks;
     private LocalDate createdAt;
+    private Double totalValue;
+    private Double initialCapital;
 }

@@ -18,7 +18,7 @@ public class UserPortfolioTransactional {
     @Value("${spring.datasource.password}")
     private String password;
     private static final String INSERT_USERS_SQL = "INSERT INTO user_portfolio" +
-                                                   " (user_id, portfolio_id, description, inital_capital, created_at) VALUES " +
+                                                   " (user_id, portfolio_id, description, initial_capital, created_at) VALUES " +
                                                    " (?, ?, ?, ?, ?);";
 
     public String createUserPortfolioRecord(String userId, String portfolioId, String description, Double initialCapital, LocalDate createdAt) throws SQLException {

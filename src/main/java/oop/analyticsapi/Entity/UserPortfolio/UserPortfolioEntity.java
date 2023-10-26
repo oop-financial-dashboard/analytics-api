@@ -25,8 +25,8 @@ public class UserPortfolioEntity {
 
     private String description;
 
-    @Column(name = "initialCapital")
-    private String initialCapital;
+    @Column(name = "initial_capital")
+    private Double initialCapital;
 
     @Column(name = "created_at")
     private LocalDate createdAt;
