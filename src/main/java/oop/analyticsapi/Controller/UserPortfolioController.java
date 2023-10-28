@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 @RestController
+@RequestMapping("/api")
 public class UserPortfolioController {
     private final UserPortfolioService userPortfolioService;
 
