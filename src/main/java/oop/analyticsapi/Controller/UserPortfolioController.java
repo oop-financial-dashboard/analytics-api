@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -83,20 +85,20 @@ public class UserPortfolioController {
     @GetMapping("/portfolio/get-historicals/{portfolioId}")
     public ResponseEntity<PortfolioHistoricals> getPortfolioHistoricals(@PathVariable String portfolioId) {
         List<PortfolioValue> result = userPortfolioService.getPortfolioHistoricals(portfolioId);
-        List<PortfolioHistorical> temp = new ArrayList<>();
+        List<List<Object>> temp = new ArrayList<>();
         for (PortfolioValue pv : result) {
-            temp.add(
-                    PortfolioHistorical.builder()
-                            .timestamp(pv.getDate())
-                            .totalValue(pv.getValue())
-                            .build()
-            );
+            ZonedDateTime zonedDateTime = pv.getDate().atStartOfDay(ZoneId.of("UTC"));
+            // Get the epoch timestamp in seconds
+            long epochTimestamp = zonedDateTime.toInstant().toEpochMilli();
+            List<Object> staticList = new ArrayList<>();
+            staticList.add(epochTimestamp);
+            staticList.add(pv.getValue());
+
+            temp.add(staticList);
         }
-        Map<String, List<PortfolioHistorical>> map = new HashMap<>();
+        Map<String, List<List<Object>>> map = new HashMap<>();
         map.put(portfolioId, temp);
-        PortfolioHistoricals data = PortfolioHistoricals.builder()
-                .data(map)
-                .build();
-        return ResponseEntity.ok(data);
+        PortfolioHistoricals finalRes = PortfolioHistoricals.builder().data(map).build();
+        return ResponseEntity.ok(finalRes);
     }
 }

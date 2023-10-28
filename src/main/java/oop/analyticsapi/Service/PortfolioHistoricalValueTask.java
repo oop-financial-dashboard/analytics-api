@@ -23,7 +23,7 @@ public class PortfolioHistoricalValueTask {
 
     private static final Logger logger = LoggerFactory.getLogger(PortfolioHistoricalValueTask.class);
 
-    @Scheduled(cron = "0 * * * * ?") // Run every day at midnight
+    @Scheduled(cron = "0/15 * * * * ?") // Run every day at midnight
     public void calculatePortfolioValue() {
         logger.info("Calculating portfolio's EOD value...");
         List<String> portfolioIds = portfolioRepository.getAllPortfolioIds();

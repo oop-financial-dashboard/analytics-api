@@ -14,5 +14,5 @@ import java.util.Map;
 @Builder
 @Data
 public class PortfolioHistoricals {
-    private Map<String, List<PortfolioHistorical>> data;
+    private Map<String, List<List<Object>>> data;
 }
