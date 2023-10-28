@@ -1,13 +1,21 @@
 package oop.analyticsapi.Controller;
 
+import oop.analyticsapi.Domain.Models.PortfolioHistorical;
 import oop.analyticsapi.Domain.Models.RequestBody.CreatePortfolioBody;
 import oop.analyticsapi.Domain.Models.RequestBody.DeletePortfolioBody;
 import oop.analyticsapi.Domain.Models.RequestBody.UpdatePortfolioBody;
 import oop.analyticsapi.Domain.ViewModel.AllPortfolios;
+import oop.analyticsapi.Domain.ViewModel.PortfolioHistoricals;
+import oop.analyticsapi.Entity.PortfolioHistoricals.PortfolioValue;
 import oop.analyticsapi.Service.UserPortfolioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 @RestController
@@ -70,5 +78,25 @@ public class UserPortfolioController {
         }
 
         return ResponseEntity.ok("Successfully updated portfolio");
+    }
+
+    @GetMapping("/portfolio/get-historicals/{portfolioId}")
+    public ResponseEntity<PortfolioHistoricals> getPortfolioHistoricals(@PathVariable String portfolioId) {
+        List<PortfolioValue> result = userPortfolioService.getPortfolioHistoricals(portfolioId);
+        List<PortfolioHistorical> temp = new ArrayList<>();
+        for (PortfolioValue pv : result) {
+            temp.add(
+                    PortfolioHistorical.builder()
+                            .timestamp(pv.getDate())
+                            .totalValue(pv.getValue())
+                            .build()
+            );
+        }
+        Map<String, List<PortfolioHistorical>> map = new HashMap<>();
+        map.put(portfolioId, temp);
+        PortfolioHistoricals data = PortfolioHistoricals.builder()
+                .data(map)
+                .build();
+        return ResponseEntity.ok(data);
     }
 }

@@ -14,8 +14,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Entity
 @IdClass(StockDailyPriceId.class)
-@Table(name = "stock_daily_price")
-//@Table(name = "welp")
+//@Table(name = "stock_daily_price")
+@Table(name = "welp")
 public class StockDailyPriceEntity {
     @Id
     private String symbol;

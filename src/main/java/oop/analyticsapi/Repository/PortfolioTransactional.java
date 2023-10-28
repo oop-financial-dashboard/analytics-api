@@ -47,6 +47,7 @@ public class PortfolioTransactional {
             System.out.println(preparedStatement);
             // Step 3: Execute the query or update query
             preparedStatement.executeUpdate();
+            preparedStatement.close();
             return "Success";
         } catch (SQLException e) {
             // print SQL exception information

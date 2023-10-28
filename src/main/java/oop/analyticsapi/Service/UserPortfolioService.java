@@ -6,6 +6,7 @@ import oop.analyticsapi.Domain.Models.Portfolio;
 import oop.analyticsapi.Domain.Models.Stock;
 import oop.analyticsapi.Domain.ViewModel.AllPortfolios;
 import oop.analyticsapi.Entity.Portfolio.PortfolioEntity;
+import oop.analyticsapi.Entity.PortfolioHistoricals.PortfolioValue;
 import oop.analyticsapi.Entity.StockDailyPrice.StockDailyPriceEntity;
 import oop.analyticsapi.Entity.UserPortfolio.UserPortfolioEntity;
 import oop.analyticsapi.Repository.*;
@@ -28,6 +29,7 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
     private final PortfolioRepository portfolioRepository;
     private final StockDailyPriceRepository stockDailyPriceRepository;
     private final UserPortfolioRepository userPortfolioRepository;
+    private final PortfolioHistoricalValueRepository portfolioHistoricalValueRepository;
     @Autowired
     private UserPortfolioTransactional userPortfolio;
     @Autowired
@@ -38,11 +40,13 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
     public UserPortfolioService(
             PortfolioRepository portfolioRepository,
             StockDailyPriceRepository stockDailyPriceRepository,
-            UserPortfolioRepository userPortfolioRepository
+            UserPortfolioRepository userPortfolioRepository,
+            PortfolioHistoricalValueRepository portfolioHistoricalValueRepository
     ) {
         this.portfolioRepository = portfolioRepository;
         this.stockDailyPriceRepository = stockDailyPriceRepository;
         this.userPortfolioRepository = userPortfolioRepository;
+        this.portfolioHistoricalValueRepository = portfolioHistoricalValueRepository;
     }
 
     @Override
@@ -135,6 +139,10 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
         return res;
     }
 
+    @Override
+    public List<PortfolioValue> getPortfolioHistoricals(String portfolioId) {
+        return portfolioHistoricalValueRepository.getPortfolioHistoricals(portfolioId);
+    }
 
 
     private String insertPortfolioEntries(List<Stock> stocks, String portfolioId) {

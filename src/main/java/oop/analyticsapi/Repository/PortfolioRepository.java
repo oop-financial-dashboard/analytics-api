@@ -1,6 +1,7 @@
 package oop.analyticsapi.Repository;
 
 import oop.analyticsapi.Entity.Portfolio.PortfolioEntity;
+import oop.analyticsapi.Entity.Portfolio.PortfolioId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -18,6 +19,11 @@ public interface PortfolioRepository extends JpaRepository<PortfolioEntity, Long
            SELECT s FROM PortfolioEntity s WHERE s.portfolioId = :portfolioId AND s.symbol = :symbol
        """)
     PortfolioEntity getOneStockInfo( @Param("portfolioId") String portfolioId, @Param("symbol") String symbol);
+
+    @Query(value = """
+           SELECT DISTINCT s.portfolioId FROM PortfolioEntity s
+       """)
+    List<String> getAllPortfolioIds();
 
     @Modifying
     @Query(value = """
