@@ -18,4 +18,5 @@ public class Portfolio {
     private LocalDate createdAt;
     private Double totalValue;
     private Double initialCapital;
+    private String description;
 }
