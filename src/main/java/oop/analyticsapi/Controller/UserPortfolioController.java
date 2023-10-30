@@ -71,7 +71,9 @@ public class UserPortfolioController {
                     updatePortfolioBody.getUserId(),
                     updatePortfolioBody.getPortfolioId(),
                     updatePortfolioBody.getAction(),
-                    updatePortfolioBody.getStock(),
+                    updatePortfolioBody.getStocks(),
+                    updatePortfolioBody.getDescription(),
+                    updatePortfolioBody.getInitialCapital(),
                     updatePortfolioBody.getEditedAt()
             );
             if (result.equals("Failed")) return ResponseEntity.internalServerError().body("Something went wrong!");

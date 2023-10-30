@@ -1,6 +1,7 @@
 package oop.analyticsapi.Service;
 
 import jakarta.transaction.Transactional;
+import jakarta.validation.constraints.Null;
 import lombok.Data;
 import oop.analyticsapi.Domain.Models.Portfolio;
 import oop.analyticsapi.Domain.Models.Stock;
@@ -63,6 +64,7 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
                     .stocks(stocks)
                     .createdAt(pid.getCreatedAt())
                     .totalValue(totalValue)
+                    .description(pid.getDescription())
                     .initialCapital(pid.getInitialCapital())
                     .build();
 
@@ -107,32 +109,39 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
 
     @Override
     @Transactional
-    public String updatePortfolio(String userId, String portfolioId, String action, Stock stock, LocalDate editedAt) {
+    public String updatePortfolio(String userId, String portfolioId, String action, List<Stock> stocks,
+                                  String description, Double initialCapital, LocalDate editedAt) {
         String res = "Success";
+        //Update description and capital first
+        try {
+            res = userPortfolio.updateUserPortfolio(userId, portfolioId, initialCapital, description);
+        } catch(SQLException e) {
+            logger.info("SQL Exception: " + e.getMessage());
+        }
+        //Process updates
         ActionEnum actionEnum = ActionEnum.getActionFromString(action);
-//        LocalDate oneDayEarlier = editedAt.minusDays(1);
-
         switch (actionEnum) {
             case Add -> {
-                //Hack
-                List<Stock> stockArray = new ArrayList<>(1);
-                stockArray.add(stock);
                 //Add new portfolio entry (non-existing stock)
-                res = insertPortfolioEntries(stockArray, portfolioId);
+                res = insertPortfolioEntries(stocks, portfolioId);
             }
             case Remove -> {
-                int deletePortfolioEntry = portfolioRepository.deleteOnePortfolioEntry(portfolioId, stock.getSymbol());
-                if (deletePortfolioEntry == 0) res = "Failed";
+                for (Stock stock: stocks) {
+                    int deletePortfolioEntry = portfolioRepository.deleteOnePortfolioEntry(portfolioId, stock.getSymbol());
+                    if (deletePortfolioEntry == 0) res = "Failed";
+                }
             }
             case Increase -> {
                     //Get new price
-                    double stockPrice = stock.getPrice();
-                    Triplet<Integer, Double, Double> data = recalculateAvgCost(portfolioId, stock.getSymbol(), stock.getQuantity(), stockPrice);
-                    try {
-                        res = portfolio.updatePortfolioRecords(portfolioId, data.getValue0(), stock.getSymbol(),
-                                data.getValue1(), data.getValue2());
-                    } catch (SQLException e) {
-                        logger.warn("Something went wrong with updatePortfolioRecords");
+                    for (Stock stock : stocks) {
+                        double stockPrice = stock.getPrice();
+                        Triplet<Integer, Double, Double> data = recalculateAvgCost(portfolioId, stock.getSymbol(), stock.getQuantity(), stockPrice);
+                        try {
+                            res = portfolio.updatePortfolioRecords(portfolioId, data.getValue0(), stock.getSymbol(),
+                                    data.getValue1(), data.getValue2());
+                        } catch (SQLException e) {
+                            logger.warn("Something went wrong with updatePortfolioRecords");
+                        }
                     }
             }
         }

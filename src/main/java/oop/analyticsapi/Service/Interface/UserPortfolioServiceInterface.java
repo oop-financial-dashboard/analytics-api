@@ -21,7 +21,9 @@ public interface UserPortfolioServiceInterface {
             String userId,
             String portfolioId,
             String action,
-            Stock stock,
+            List<Stock> stock,
+            String description,
+            Double initialCapital,
             LocalDate editedAt
     );
 
