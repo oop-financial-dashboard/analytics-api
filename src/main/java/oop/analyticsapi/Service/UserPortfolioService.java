@@ -53,9 +53,9 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
     @Override
     public AllPortfolios getAllPortfoliosByUser(String userId) {
         Map<String, Portfolio> portfolios = new HashMap<>();
-        double totalValue = 0;
         List<UserPortfolioEntity> portfolioIds = userPortfolioRepository.getAllPortfoliosByUserId(userId);
         for (UserPortfolioEntity pid : portfolioIds) {
+            double totalValue = 0;
             List<PortfolioEntity> stocks = portfolioRepository.getAllStocksInPortfolio(pid.getPortfolioId());
             for (PortfolioEntity pe : stocks) {
                 totalValue += pe.getValue();
