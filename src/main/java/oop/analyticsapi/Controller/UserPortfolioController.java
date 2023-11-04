@@ -67,7 +67,6 @@ public class UserPortfolioController {
 
     @PostMapping("/portfolio/update")
     public ResponseEntity<String> updatePortfolio(@RequestBody UpdatePortfolioBody updatePortfolioBody) {
-
         try {
             String result = userPortfolioService.updatePortfolio(
                     updatePortfolioBody.getUserId(),
@@ -79,8 +78,9 @@ public class UserPortfolioController {
                     updatePortfolioBody.getEditedAt()
             );
             if (result.equals("Failed")) return ResponseEntity.internalServerError().body("Something went wrong!");
-        } catch(RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch(NullPointerException e) {
+            System.out.println(e.getMessage());
+            return ResponseEntity.badRequest().body("Missing field.");
         }
 
         return ResponseEntity.ok("Successfully updated portfolio");

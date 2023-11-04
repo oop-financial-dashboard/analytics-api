@@ -28,27 +28,14 @@ public interface PortfolioRepository extends JpaRepository<PortfolioEntity, Long
 
     @Modifying
     @Query(value = """
-         DELETE FROM PortfolioEntity WHERE portfolioId = :portfolioId
+         DELETE FROM PortfolioEntity WHERE portfolioId = :portfolioId AND userId = :userId
          """)
-    int deletePortfolioEntry(@Param("portfolioId") String portfolioId);
+    int deletePortfolioEntry(@Param("portfolioId") String portfolioId, @Param("userId") String userId);
 
     @Modifying
     @Query(value = """
-         DELETE FROM PortfolioEntity WHERE portfolioId = :portfolioId AND symbol = :symbol
+         DELETE FROM PortfolioEntity WHERE userId = :userId AND portfolioId = :portfolioId AND symbol = :symbol
          """)
-    int deleteOnePortfolioEntry(@Param("portfolioId") String portfolioId, @Param("symbol") String symbol);
+    int deleteOnePortfolioEntry(@Param("userId") String userId, @Param("portfolioId") String portfolioId, @Param("symbol") String symbol);
 
-    //Update
-    //For updating values/quantity/avg cost
-    @Modifying
-    @Query(value = """
-       UPDATE PortfolioEntity SET quantity = :quantity, averageCost = :averageCost, totalValue = :totalValue
-       WHERE portfolioId = :portfolioId AND symbol = :symbol
-       """, nativeQuery = true)
-    int updatePortfolioEntry(@Param("portfolioId") String portfolioId,
-                             @Param("quantity") int quantity,
-                             @Param("symbol") String symbol,
-                             @Param("averageCost")double averageCost,
-                             @Param("totalValue") double totalValue
-    );
 }

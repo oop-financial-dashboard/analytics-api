@@ -99,7 +99,7 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
     public String deletePortfolio(String userId, String portfolioId) {
         String res = "Success";
         int deleteUserPortfolioEntry = userPortfolioRepository.deleteUserPortfolioEntry(userId, portfolioId);
-        int deletePortfolioEntries = portfolioRepository.deletePortfolioEntry(portfolioId);
+        int deletePortfolioEntries = portfolioRepository.deletePortfolioEntry(portfolioId, userId);
         if (deleteUserPortfolioEntry == 0
                 || deletePortfolioEntries == 0) {
             res = "Failed";
@@ -114,10 +114,12 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
                                   String description, Double initialCapital, LocalDate editedAt) {
         String res = "Success";
         //Update description and capital first
-        try {
-            res = userPortfolio.updateUserPortfolio(userId, portfolioId, initialCapital, description);
-        } catch(SQLException e) {
-            logger.info("SQL Exception: " + e.getMessage());
+        if (initialCapital != null && description != null) {
+            try {
+                res = userPortfolio.updateUserPortfolio(userId, portfolioId, initialCapital, description);
+            } catch(SQLException e) {
+                logger.info("SQL Exception: " + e.getMessage());
+            }
         }
         //Process updates
         ActionEnum actionEnum = ActionEnum.getActionFromString(action);
@@ -128,7 +130,7 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
             }
             case Remove -> {
                 for (Stock stock: stocks) {
-                    int deletePortfolioEntry = portfolioRepository.deleteOnePortfolioEntry(portfolioId, stock.getSymbol());
+                    int deletePortfolioEntry = portfolioRepository.deleteOnePortfolioEntry(userId, portfolioId, stock.getSymbol());
                     if (deletePortfolioEntry == 0) res = "Failed";
                 }
             }
