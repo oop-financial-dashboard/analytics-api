@@ -19,7 +19,7 @@ public class UserPortfolioTransactional {
     private String password;
     private static final String INSERT_USERS_SQL = "INSERT INTO user_portfolio" +
                                                    " (user_id, portfolio_id, description, initial_capital, created_at) VALUES " +
-                                                   " (?, ?, ?, ?, ?);";
+                                                   " (?, ?, ?, ?, ?);" ;
     private static final String UPDATE_PORTFOLIO = "UPDATE user_portfolio" +
             " SET description = ? , initial_capital = ? " +
             "WHERE user_id = ? AND portfolio_id = ?;";

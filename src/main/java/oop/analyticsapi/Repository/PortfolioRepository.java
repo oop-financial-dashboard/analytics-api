@@ -1,5 +1,6 @@
 package oop.analyticsapi.Repository;
 
+import oop.analyticsapi.Domain.Models.PortfolioUserIds;
 import oop.analyticsapi.Entity.Portfolio.PortfolioEntity;
 import oop.analyticsapi.Entity.Portfolio.PortfolioId;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,9 +12,9 @@ import java.util.List;
 
 public interface PortfolioRepository extends JpaRepository<PortfolioEntity, Long> {
     @Query(value = """
-           SELECT p FROM PortfolioEntity p WHERE p.portfolioId = :portfolioId
+           SELECT p FROM PortfolioEntity p WHERE p.portfolioId = :portfolioId AND p.userId = :userId
        """)
-    List<PortfolioEntity> getAllStocksInPortfolio(@Param("portfolioId") String portfolioId);
+    List<PortfolioEntity> getAllStocksInPortfolio(@Param("userId") String userId, @Param("portfolioId") String portfolioId);
 
     @Query(value = """
            SELECT s FROM PortfolioEntity s WHERE s.portfolioId = :portfolioId AND s.symbol = :symbol
@@ -21,9 +22,9 @@ public interface PortfolioRepository extends JpaRepository<PortfolioEntity, Long
     PortfolioEntity getOneStockInfo( @Param("portfolioId") String portfolioId, @Param("symbol") String symbol);
 
     @Query(value = """
-           SELECT DISTINCT s.portfolioId FROM PortfolioEntity s
+           SELECT DISTINCT s.userId, s.portfolioId FROM PortfolioEntity s
        """)
-    List<String> getAllPortfolioIds();
+    List<PortfolioUserIds> getAllPortfolioIds();
 
     @Modifying
     @Query(value = """

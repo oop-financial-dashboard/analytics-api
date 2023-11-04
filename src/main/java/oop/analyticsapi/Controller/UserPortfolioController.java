@@ -84,9 +84,9 @@ public class UserPortfolioController {
         return ResponseEntity.ok("Successfully updated portfolio");
     }
 
-    @GetMapping("/portfolio/get-historicals/{portfolioId}")
-    public ResponseEntity<PortfolioHistoricals> getPortfolioHistoricals(@PathVariable String portfolioId) {
-        List<PortfolioValue> result = userPortfolioService.getPortfolioHistoricals(portfolioId);
+    @GetMapping("/portfolio/get-historicals/{userId}/{portfolioId}")
+    public ResponseEntity<PortfolioHistoricals> getPortfolioHistoricals(@PathVariable String userId, @PathVariable String portfolioId) {
+        List<PortfolioValue> result = userPortfolioService.getPortfolioHistoricals(portfolioId, userId);
         List<List<Object>> temp = new ArrayList<>();
         for (PortfolioValue pv : result) {
             ZonedDateTime zonedDateTime = pv.getDate().atStartOfDay(ZoneId.of("UTC"));

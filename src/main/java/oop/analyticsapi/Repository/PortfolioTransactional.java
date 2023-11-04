@@ -19,13 +19,14 @@ public class PortfolioTransactional {
     @Value("${spring.datasource.password}")
     private String password;
     private static final String INSERT_PORTFOLIO_SQL = "INSERT INTO portfolio" +
-                                                   " (portfolio_id, quantity, symbol, average_price, total_value, date_added) VALUES " +
-                                                   " (?, ?, ?, ?, ?, ?);";
+                                                   " (user_id, portfolio_id, quantity, symbol, average_price, total_value, date_added) VALUES " +
+                                                   " (?, ?, ?, ?, ?, ?, ?);";
     private static final String UPDATE_PORTFOLIO = "UPDATE portfolio " +
                                                    "SET quantity = ?, average_price = ?, total_value = ? " +
-                                                   "WHERE portfolio_id = ? AND symbol = ?;";
+                                                   "WHERE user_id = ? AND portfolio_id = ? AND symbol = ?;";
 
     public String createPortfolioRecord(
+            String userId,
             String portfolioId,
             int quantity,
             String symbol,
@@ -37,12 +38,13 @@ public class PortfolioTransactional {
         try (Connection connection = DriverManager.getConnection(db_url, user, password);
              // Step 2:Create a statement using connection object
              PreparedStatement preparedStatement = connection.prepareStatement(INSERT_PORTFOLIO_SQL)) {
-            preparedStatement.setString(1, portfolioId);
-            preparedStatement.setInt(2, quantity);
-            preparedStatement.setString(3, symbol);
-            preparedStatement.setDouble(4, averageCost);
-            preparedStatement.setDouble(5, totalValue);
-            preparedStatement.setDate(6, Date.valueOf(dateAdded));
+            preparedStatement.setString(1, userId);
+            preparedStatement.setString(2, portfolioId);
+            preparedStatement.setInt(3, quantity);
+            preparedStatement.setString(4, symbol);
+            preparedStatement.setDouble(5, averageCost);
+            preparedStatement.setDouble(6, totalValue);
+            preparedStatement.setDate(7, Date.valueOf(dateAdded));
 
             System.out.println(preparedStatement);
             // Step 3: Execute the query or update query
@@ -57,7 +59,7 @@ public class PortfolioTransactional {
         }
     }
 
-    public String updatePortfolioRecords(String portfolioId, int quantity, String symbol, double averageCost, double totalValue) throws SQLException {
+    public String updatePortfolioRecords(String userId, String portfolioId, int quantity, String symbol, double averageCost, double totalValue) throws SQLException {
         // Step 1: Establishing a Connection
         try (Connection connection = DriverManager.getConnection(db_url, user, password);
              // Step 2:Create a statement using connection object
@@ -65,8 +67,9 @@ public class PortfolioTransactional {
             preparedStatement.setInt(1, quantity);
             preparedStatement.setDouble(2, averageCost);
             preparedStatement.setDouble(3, totalValue);
-            preparedStatement.setString(4, portfolioId);
-            preparedStatement.setString(5, symbol);
+            preparedStatement.setString(4, userId);
+            preparedStatement.setString(5, portfolioId);
+            preparedStatement.setString(6, symbol);
 
             System.out.println(preparedStatement);
             // Step 3: Execute the query or update query

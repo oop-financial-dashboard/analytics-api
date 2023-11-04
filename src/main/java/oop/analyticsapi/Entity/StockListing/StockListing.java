@@ -15,6 +15,7 @@ import java.time.LocalDate;
 @Entity
 @IdClass(StockListingId.class)
 @Table(name="available_stocks")
+//@Table(name="hitwo")
 public class StockListing {
     @Id
     private String symbol;

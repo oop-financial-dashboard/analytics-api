@@ -27,7 +27,7 @@ public interface UserPortfolioServiceInterface {
             LocalDate editedAt
     );
 
-    List<PortfolioValue> getPortfolioHistoricals(String portfolioId);
+    List<PortfolioValue> getPortfolioHistoricals(String portfolioId, String userId);
 
 
 }

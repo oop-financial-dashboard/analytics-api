@@ -56,7 +56,8 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
         List<UserPortfolioEntity> portfolioIds = userPortfolioRepository.getAllPortfoliosByUserId(userId);
         for (UserPortfolioEntity pid : portfolioIds) {
             double totalValue = 0;
-            List<PortfolioEntity> stocks = portfolioRepository.getAllStocksInPortfolio(pid.getPortfolioId());
+            List<PortfolioEntity> stocks = portfolioRepository
+                    .getAllStocksInPortfolio(pid.getUserId(), pid.getPortfolioId());
             for (PortfolioEntity pe : stocks) {
                 totalValue += pe.getValue();
             }
@@ -85,7 +86,7 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
             String res = userPortfolio.createUserPortfolioRecord(userId, portfolioId, description, initialCapital, createdAt);
             if (res.equals("Failed")) return res;
 //            LocalDate oneDayEarlier = createdAt.minusDays(1);
-            String status = insertPortfolioEntries(stocks, portfolioId);
+            String status = insertPortfolioEntries(userId, stocks, portfolioId);
             if (status.equals("Failed")) return status;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -123,7 +124,7 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
         switch (actionEnum) {
             case Add -> {
                 //Add new portfolio entry (non-existing stock)
-                res = insertPortfolioEntries(stocks, portfolioId);
+                res = insertPortfolioEntries(userId, stocks, portfolioId);
             }
             case Remove -> {
                 for (Stock stock: stocks) {
@@ -137,7 +138,7 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
                         double stockPrice = stock.getPrice();
                         Triplet<Integer, Double, Double> data = recalculateAvgCost(portfolioId, stock.getSymbol(), stock.getQuantity(), stockPrice);
                         try {
-                            res = portfolio.updatePortfolioRecords(portfolioId, data.getValue0(), stock.getSymbol(),
+                            res = portfolio.updatePortfolioRecords(userId, portfolioId, data.getValue0(), stock.getSymbol(),
                                     data.getValue1(), data.getValue2());
                         } catch (SQLException e) {
                             logger.warn("Something went wrong with updatePortfolioRecords");
@@ -149,12 +150,12 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
     }
 
     @Override
-    public List<PortfolioValue> getPortfolioHistoricals(String portfolioId) {
-        return portfolioHistoricalValueRepository.getPortfolioHistoricals(portfolioId);
+    public List<PortfolioValue> getPortfolioHistoricals(String portfolioId, String userId) {
+        return portfolioHistoricalValueRepository.getPortfolioHistoricals(portfolioId, userId);
     }
 
 
-    private String insertPortfolioEntries(List<Stock> stocks, String portfolioId) {
+    private String insertPortfolioEntries(String userId, List<Stock> stocks, String portfolioId) {
         for (Stock stock : stocks) {
             String symbol = stock.getSymbol();
             //Get price on creation of portfolio
@@ -163,7 +164,7 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
             double totalValue = price * quantity;
             LocalDate dateAdded = stock.getDateAdded();
             try {
-                portfolio.createPortfolioRecord(portfolioId, quantity, symbol, price, totalValue, dateAdded);
+                portfolio.createPortfolioRecord(userId,portfolioId, quantity, symbol, price, totalValue, dateAdded);
             } catch (Exception e) {
                 logger.warn("Double parse error!");
                 return "Failed";
