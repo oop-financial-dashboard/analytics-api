@@ -5,11 +5,15 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Data
 public class PortfolioUserIds {
     private String userId;
     private String portfolioId;
+
+    public PortfolioUserIds(String userId, String portfolioId) {
+        this.userId = userId;
+        this.portfolioId = portfolioId;
+    }
 }

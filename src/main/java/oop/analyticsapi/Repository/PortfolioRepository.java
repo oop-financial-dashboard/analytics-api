@@ -24,7 +24,7 @@ public interface PortfolioRepository extends JpaRepository<PortfolioEntity, Long
     @Query(value = """
            SELECT DISTINCT s.userId, s.portfolioId FROM PortfolioEntity s
        """)
-    List<PortfolioUserIds> getAllPortfolioIds();
+    List<Object[]> getAllPortfolioIds();
 
     @Modifying
     @Query(value = """

@@ -32,17 +32,19 @@ public class UserPortfolioController {
 
     @PostMapping("/portfolio/create")
     public ResponseEntity<String> createPortfolio(@RequestBody CreatePortfolioBody createPortfolioBody) {
-        String result = userPortfolioService.createNewPortfolio(
-                createPortfolioBody.getUserId(),
-                createPortfolioBody.getPortfolioId(),
-                createPortfolioBody.getStocks(),
-                createPortfolioBody.getDescription(),
-                createPortfolioBody.getInitialCapital(),
-                createPortfolioBody.getCreatedAt()
-        );
-        if (result.equals("Failed")) return ResponseEntity.internalServerError().body("Something went wrong!");
-
-        return ResponseEntity.ok("Successfully created portfolio.");
+        try {
+            String result = userPortfolioService.createNewPortfolio(
+                    createPortfolioBody.getUserId(),
+                    createPortfolioBody.getPortfolioId(),
+                    createPortfolioBody.getStocks(),
+                    createPortfolioBody.getDescription(),
+                    createPortfolioBody.getInitialCapital(),
+                    createPortfolioBody.getCreatedAt()
+            );
+            return ResponseEntity.ok("Successfully created portfolio.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @GetMapping("/portfolio/get-all/{userId}")
@@ -77,8 +79,8 @@ public class UserPortfolioController {
                     updatePortfolioBody.getEditedAt()
             );
             if (result.equals("Failed")) return ResponseEntity.internalServerError().body("Something went wrong!");
-        } catch(NullPointerException e) {
-            return ResponseEntity.badRequest().body("Missing field.");
+        } catch(RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
 
         return ResponseEntity.ok("Successfully updated portfolio");

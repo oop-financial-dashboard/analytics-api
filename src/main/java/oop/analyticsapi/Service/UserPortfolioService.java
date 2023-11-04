@@ -10,6 +10,8 @@ import oop.analyticsapi.Entity.Portfolio.PortfolioEntity;
 import oop.analyticsapi.Entity.PortfolioHistoricals.PortfolioValue;
 import oop.analyticsapi.Entity.StockDailyPrice.StockDailyPriceEntity;
 import oop.analyticsapi.Entity.UserPortfolio.UserPortfolioEntity;
+import oop.analyticsapi.Enums.ErrorEnum;
+import oop.analyticsapi.Exceptions.GenericException;
 import oop.analyticsapi.Repository.*;
 import oop.analyticsapi.Service.Interface.UserPortfolioServiceInterface;
 import oop.analyticsapi.Enums.ActionEnum;
@@ -84,12 +86,10 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
         //First insert new row in user_portfolio
         try {
             String res = userPortfolio.createUserPortfolioRecord(userId, portfolioId, description, initialCapital, createdAt);
-            if (res.equals("Failed")) return res;
 //            LocalDate oneDayEarlier = createdAt.minusDays(1);
-            String status = insertPortfolioEntries(userId, stocks, portfolioId);
-            if (status.equals("Failed")) return status;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+            insertPortfolioEntries(userId, stocks, portfolioId);
+        } catch (Exception e) {
+            throw new GenericException(ErrorEnum.ExistingPID);
         }
         return "Success";
     }

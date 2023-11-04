@@ -1,5 +1,7 @@
 package oop.analyticsapi.Repository;
 
+import oop.analyticsapi.Enums.ErrorEnum;
+import oop.analyticsapi.Exceptions.GenericException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +26,7 @@ public class UserPortfolioTransactional {
             " SET description = ? , initial_capital = ? " +
             "WHERE user_id = ? AND portfolio_id = ?;";
 
-    public String createUserPortfolioRecord(String userId, String portfolioId, String description, Double initialCapital, LocalDate createdAt) throws SQLException {
+    public String createUserPortfolioRecord(String userId, String portfolioId, String description, Double initialCapital, LocalDate createdAt) throws GenericException {
         // Step 1: Establishing a Connection
         try (Connection connection = DriverManager.getConnection(db_url, user, password);
              // Step 2:Create a statement using connection object
@@ -39,12 +41,13 @@ public class UserPortfolioTransactional {
             // Step 3: Execute the query or update query
             preparedStatement.executeUpdate();
             preparedStatement.close();
+            connection.close();
             return "Success";
         } catch (SQLException e) {
             // print SQL exception information
             System.out.println(e.getMessage());
-            System.out.println("Something went wrong!");
-            return "Failed";
+//            System.out.println("Something went wrong!");
+            throw new GenericException(ErrorEnum.ExistingPID);
         }
     }
 
@@ -62,6 +65,7 @@ public class UserPortfolioTransactional {
             // Step 3: Execute the query or update query
             preparedStatement.executeUpdate();
             preparedStatement.close();
+            connection.close();
             return "Success";
         } catch (SQLException e) {
             // print SQL exception information

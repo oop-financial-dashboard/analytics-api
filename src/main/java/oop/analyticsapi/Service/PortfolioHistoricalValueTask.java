@@ -1,7 +1,6 @@
 package oop.analyticsapi.Service;
 
 
-import oop.analyticsapi.Domain.Models.PortfolioUserIds;
 import oop.analyticsapi.Entity.Portfolio.PortfolioEntity;
 import oop.analyticsapi.Repository.PortfolioHistoricalValueTransactional;
 import oop.analyticsapi.Repository.PortfolioRepository;
@@ -27,16 +26,19 @@ public class PortfolioHistoricalValueTask {
     @Scheduled(cron = "0 0 * * * ?") // Run every day at midnight
     public void calculatePortfolioValue() {
         logger.info("Calculating portfolio's EOD value...");
-        List<PortfolioUserIds> data = portfolioRepository.getAllPortfolioIds();
-        for (PortfolioUserIds id: data) {
+        List<Object[]> data = portfolioRepository.getAllPortfolioIds();
+        System.out.println(data);
+        for (Object[] id: data) {
             double totalValue = 0.0;
-            List<PortfolioEntity> portfolioEntries = portfolioRepository.getAllStocksInPortfolio(id.getUserId(), id.getPortfolioId());
+            String userId = (String) id[0];
+            String portfolioId = (String) id[1];
+            List<PortfolioEntity> portfolioEntries = portfolioRepository.getAllStocksInPortfolio(userId, portfolioId);
             for (PortfolioEntity pe: portfolioEntries) {
                 totalValue += pe.getValue();
             }
             LocalDate currentDate = LocalDate.now();
             try {
-                portfolioHistoricalValueTransactional.insertDailyPortfolioValue(id.getUserId() , id.getPortfolioId(), totalValue, currentDate);
+                portfolioHistoricalValueTransactional.insertDailyPortfolioValue(userId , portfolioId, totalValue, currentDate);
             } catch (SQLException e) {
                 logger.error(e.getMessage());
             }
