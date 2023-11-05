@@ -17,9 +17,9 @@ public interface PortfolioRepository extends JpaRepository<PortfolioEntity, Long
     List<PortfolioEntity> getAllStocksInPortfolio(@Param("userId") String userId, @Param("portfolioId") String portfolioId);
 
     @Query(value = """
-           SELECT s FROM PortfolioEntity s WHERE s.portfolioId = :portfolioId AND s.symbol = :symbol
+           SELECT s FROM PortfolioEntity s WHERE s.userId = :userId AND s.portfolioId = :portfolioId AND s.symbol = :symbol
        """)
-    PortfolioEntity getOneStockInfo( @Param("portfolioId") String portfolioId, @Param("symbol") String symbol);
+    PortfolioEntity getOneStockInfo( @Param("userId") String userId, @Param("portfolioId") String portfolioId, @Param("symbol") String symbol);
 
     @Query(value = """
            SELECT DISTINCT s.userId, s.portfolioId FROM PortfolioEntity s

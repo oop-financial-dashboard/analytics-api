@@ -138,7 +138,7 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
                     //Get new price
                     for (Stock stock : stocks) {
                         double stockPrice = stock.getPrice();
-                        Triplet<Integer, Double, Double> data = recalculateAvgCost(portfolioId, stock.getSymbol(), stock.getQuantity(), stockPrice);
+                        Triplet<Integer, Double, Double> data = recalculateAvgCost(userId, portfolioId, stock.getSymbol(), stock.getQuantity(), stockPrice);
                         try {
                             res = portfolio.updatePortfolioRecords(userId, portfolioId, data.getValue0(), stock.getSymbol(),
                                     data.getValue1(), data.getValue2());
@@ -175,8 +175,8 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
         return "Success";
     }
 
-    private Triplet<Integer, Double, Double> recalculateAvgCost(String portfolioId, String symbol, int addedQuantity, double newPrice) {
-        PortfolioEntity existingStockData = portfolioRepository.getOneStockInfo(portfolioId, symbol);
+    private Triplet<Integer, Double, Double> recalculateAvgCost(String userId, String portfolioId, String symbol, int addedQuantity, double newPrice) {
+        PortfolioEntity existingStockData = portfolioRepository.getOneStockInfo(userId, portfolioId, symbol);
         double newTotalValue = (addedQuantity * newPrice) + existingStockData.getValue();
         int totalQty = addedQuantity + existingStockData.getQuantity();
         double newAvg = (newTotalValue / totalQty);
