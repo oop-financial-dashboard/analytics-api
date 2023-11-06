@@ -41,7 +41,7 @@ public class TempCacheEntity {
     private LocalDate dateAdded;
 
     @Column(name = "action")
-    private LocalDate action;
+    private String action;
 
 
 }

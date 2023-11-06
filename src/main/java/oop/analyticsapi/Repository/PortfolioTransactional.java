@@ -25,7 +25,7 @@ public class PortfolioTransactional {
                                                    "SET quantity = ?, average_price = ?, total_value = ? " +
                                                    "WHERE user_id = ? AND portfolio_id = ? AND symbol = ?;";
 
-    private static final String INSERT_CACHE = "INSERT INTO portfolio" +
+    private static final String INSERT_CACHE = "INSERT INTO update_cache" +
             " (user_id, portfolio_id, quantity, symbol, average_price, total_value, date_added, action) VALUES " +
             " (?, ?, ?, ?, ?, ?, ?, ?);";
 

@@ -21,6 +21,7 @@ import org.javatuples.Triplet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
@@ -38,6 +39,8 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
     private UserPortfolioTransactional userPortfolio;
     @Autowired
     private PortfolioTransactional portfolio;
+    @Autowired
+    private PortfolioHistoricalValueTask task;
     private static final Logger logger = LoggerFactory.getLogger(UserPortfolioService.class);
 
     @Autowired
@@ -89,6 +92,7 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
             String res = userPortfolio.createUserPortfolioRecord(userId, portfolioId, description, initialCapital, createdAt);
 //            LocalDate oneDayEarlier = createdAt.minusDays(1);
             insertPortfolioEntries(userId, stocks, portfolioId);
+            task.calculateCompletePortfolioValue();
         } catch (Exception e) {
             throw new GenericException(ErrorEnum.ExistingPID);
         }
@@ -128,10 +132,13 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
             case Add -> {
                 //Add new portfolio entry (non-existing stock)
                 res = insertPortfolioEntries(userId, stocks, portfolioId);
+                task.calculateCompletePortfolioValue();
             }
             case Remove -> {
                 for (Stock stock: stocks) {
                     //Put in cache to update historicals
+                    //Make a query to when this stock was added to the db
+                    LocalDate dateAdded = portfolioRepository.getOneStockInfo(userId, portfolioId, stock.getSymbol()).getDateAdded();
                     try {
                         portfolio.insertCache(
                                 userId,
@@ -140,7 +147,7 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
                                 stock.getSymbol(),
                                 0.0,
                                 0.0,
-                                stock.getDateAdded(),
+                                dateAdded,
                                 "Remove"
                         );
                     } catch (SQLException e) {
@@ -150,6 +157,7 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
                     int deletePortfolioEntry = portfolioRepository.deleteOnePortfolioEntry(userId, portfolioId, stock.getSymbol());
                     if (deletePortfolioEntry == 0) res = "Failed";
                 }
+                task.processHistoricalUpdates();
             }
             case Increase -> {
                     //Get new price
@@ -177,6 +185,7 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
                             logger.warn("Something went wrong with updatePortfolioRecords");
                         }
                     }
+                    task.processHistoricalUpdates();
             }
         }
         return res;
