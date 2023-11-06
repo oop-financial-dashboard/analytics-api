@@ -1,24 +1,22 @@
-package oop.analyticsapi.Entity.PortfolioHistoricals;
+package oop.analyticsapi.Entity.TemporaryCache;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import oop.analyticsapi.Entity.Portfolio.PortfolioId;
+import oop.analyticsapi.Entity.UserPortfolio.UserPortfolioId;
 
 import java.time.LocalDate;
-
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@IdClass(PortfolioValueId.class)
-//@Table(name = "portfolio_historicals")
-@Table(name = "portfolio_historicals")
-public class PortfolioValue {
+@IdClass(UserPortfolioId.class)
+@Table(name = "update_cache")
+public class TempCacheEntity {
     @Id
     @Column(name = "user_id")
     private String userId;
@@ -27,16 +25,23 @@ public class PortfolioValue {
     @Column(name = "portfolio_id")
     private String portfolioId;
 
-    @Id
     @Column(name = "symbol")
     private String symbol;
+
+    @Column(name = "quantity")
+    private Integer quantity;
+
+    @Column(name = "average_price")
+    private double averagePrice;
 
     @Column(name = "total_value")
     private double value;
 
-    @Id
-    @Column(name = "date")
-    private LocalDate date;
+    @Column(name = "date_added")
+    private LocalDate dateAdded;
+
+    @Column(name = "action")
+    private LocalDate action;
+
 
 }
-

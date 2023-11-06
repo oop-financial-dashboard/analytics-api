@@ -131,6 +131,22 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
             }
             case Remove -> {
                 for (Stock stock: stocks) {
+                    //Put in cache to update historicals
+                    try {
+                        portfolio.insertCache(
+                                userId,
+                                portfolioId,
+                                0,
+                                stock.getSymbol(),
+                                0.0,
+                                0.0,
+                                stock.getDateAdded(),
+                                "Remove"
+                        );
+                    } catch (SQLException e) {
+                        logger.warn("Failed to insert to cache: " + e.getMessage());
+                    }
+
                     int deletePortfolioEntry = portfolioRepository.deleteOnePortfolioEntry(userId, portfolioId, stock.getSymbol());
                     if (deletePortfolioEntry == 0) res = "Failed";
                 }
@@ -138,6 +154,20 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
             case Increase -> {
                     //Get new price
                     for (Stock stock : stocks) {
+                        try {
+                            portfolio.insertCache(
+                                    userId,
+                                    portfolioId,
+                                    stock.getQuantity(),
+                                    stock.getSymbol(),
+                                    stock.getPrice(),
+                                    0.0,
+                                    stock.getDateAdded(),
+                                    "Increase"
+                            );
+                        } catch (SQLException e) {
+                            logger.warn("Failed to insert to cache: " + e.getMessage());
+                        }
                         double stockPrice = stock.getPrice();
                         Triplet<Integer, Double, Double> data = recalculateAvgCost(userId, portfolioId, stock.getSymbol(), stock.getQuantity(), stockPrice);
                         try {
