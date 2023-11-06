@@ -12,7 +12,7 @@ import java.util.List;
 
 public interface PortfolioRepository extends JpaRepository<PortfolioEntity, Long> {
     @Query(value = """
-           SELECT p FROM PortfolioEntity p WHERE p.portfolioId = :portfolioId AND p.userId = :userId
+           SELECT p FROM PortfolioEntity p WHERE p.portfolioId = :portfolioId AND p.userId = :userId ORDER BY p.dateAdded ASC
        """)
     List<PortfolioEntity> getAllStocksInPortfolio(@Param("userId") String userId, @Param("portfolioId") String portfolioId);
 
@@ -22,7 +22,7 @@ public interface PortfolioRepository extends JpaRepository<PortfolioEntity, Long
     PortfolioEntity getOneStockInfo( @Param("userId") String userId, @Param("portfolioId") String portfolioId, @Param("symbol") String symbol);
 
     @Query(value = """
-           SELECT DISTINCT s.userId, s.portfolioId FROM PortfolioEntity s
+           SELECT DISTINCT s.userId, s.portfolioId, s.dateAdded FROM PortfolioEntity s
        """)
     List<Object[]> getAllPortfolioIds();
 

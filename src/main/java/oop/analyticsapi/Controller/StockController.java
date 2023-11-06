@@ -45,7 +45,7 @@ public class StockController {
 
     @PostMapping("/stock/historicals")
     public ResponseEntity<List<StockDailyPriceEntity>> getStockPriceHistoricals(@RequestBody StockPriceHistoricals stockPrice) {
-        List<StockDailyPriceEntity> result = stockPriceService.getStockHistoricals(stockPrice.getSymbol(), stockPrice.getFrom(), stockPrice.getDays());
+        List<StockDailyPriceEntity> result = stockPriceService.getStockHistoricals(stockPrice.getSymbol(), stockPrice.getEnd(), stockPrice.getStart());
         return ResponseEntity.ok(result);
     }
 

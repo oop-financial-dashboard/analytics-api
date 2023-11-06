@@ -1,5 +1,6 @@
 package oop.analyticsapi.Service.Interface;
 
+import oop.analyticsapi.Domain.Models.PortfolioAggregatedHistoricals;
 import oop.analyticsapi.Domain.Models.Stock;
 import oop.analyticsapi.Domain.ViewModel.AllPortfolios;
 import oop.analyticsapi.Entity.PortfolioHistoricals.PortfolioValue;
@@ -27,7 +28,7 @@ public interface UserPortfolioServiceInterface {
             LocalDate editedAt
     );
 
-    List<PortfolioValue> getPortfolioHistoricals(String portfolioId, String userId);
+    List<PortfolioAggregatedHistoricals> getPortfolioHistoricals(String portfolioId, String userId);
 
 
 }

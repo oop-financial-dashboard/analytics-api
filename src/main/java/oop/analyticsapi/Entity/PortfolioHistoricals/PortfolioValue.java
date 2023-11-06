@@ -21,9 +21,14 @@ public class PortfolioValue {
     @Id
     @Column(name = "user_id")
     private String userId;
+
     @Id
     @Column(name = "portfolio_id")
     private String portfolioId;
+
+    @Id
+    @Column(name = "symbol")
+    private String symbol;
 
     @Column(name = "total_value")
     private double value;
@@ -31,5 +36,6 @@ public class PortfolioValue {
     @Id
     @Column(name = "date")
     private LocalDate date;
+
 }
 

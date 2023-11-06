@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.Null;
 import lombok.Data;
 import oop.analyticsapi.Domain.Models.Portfolio;
+import oop.analyticsapi.Domain.Models.PortfolioAggregatedHistoricals;
 import oop.analyticsapi.Domain.Models.Stock;
 import oop.analyticsapi.Domain.ViewModel.AllPortfolios;
 import oop.analyticsapi.Entity.Portfolio.PortfolioEntity;
@@ -152,8 +153,37 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
     }
 
     @Override
-    public List<PortfolioValue> getPortfolioHistoricals(String portfolioId, String userId) {
-        return portfolioHistoricalValueRepository.getPortfolioHistoricals(portfolioId, userId);
+    public List<PortfolioAggregatedHistoricals> getPortfolioHistoricals(String portfolioId, String userId) {
+        List<PortfolioValue> pf = portfolioHistoricalValueRepository.getPortfolioHistoricals(portfolioId, userId);
+        Map<LocalDate, List<PortfolioValue>> unsortedMap = new HashMap<>();
+        List<PortfolioAggregatedHistoricals> res = new ArrayList<>();
+        //Arrange into a sorted map by date
+        for (PortfolioValue p: pf) {
+            if (unsortedMap.containsKey(p.getDate())) {
+                unsortedMap.get(p.getDate()).add(p);
+            } else {
+                List<PortfolioValue> values = new ArrayList<>();
+                values.add(p);
+                unsortedMap.put(p.getDate(), values);
+            }
+        }
+        Map<LocalDate, List<PortfolioValue>> sortedMap = new TreeMap<>(unsortedMap);
+        for (Map.Entry<LocalDate, List<PortfolioValue>> item : sortedMap.entrySet()) {
+            double totalValue = 0.0;
+
+            for (PortfolioValue val: item.getValue()) {
+                totalValue += val.getValue();
+            }
+            res.add(
+                    PortfolioAggregatedHistoricals.builder()
+                    .date(item.getKey())
+                    .value(totalValue)
+                    .portfolioId(portfolioId)
+                    .userId(userId)
+                    .build()
+            );
+        }
+        return res;
     }
 
 

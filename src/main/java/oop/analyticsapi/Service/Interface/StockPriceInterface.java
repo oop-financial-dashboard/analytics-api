@@ -10,5 +10,5 @@ import java.util.Optional;
 
 public interface StockPriceInterface {
     Optional<StockDailyPriceEntity> getCurrentStockPrice(String symbol, LocalDate timestamp);
-    List<StockDailyPriceEntity> getStockHistoricals(String symbol, LocalDate from, Integer days);
+    List<StockDailyPriceEntity> getStockHistoricals(String symbol, LocalDate end,LocalDate start);
 }

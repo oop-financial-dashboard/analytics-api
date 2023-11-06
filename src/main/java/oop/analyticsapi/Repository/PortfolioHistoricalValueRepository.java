@@ -9,7 +9,7 @@ import java.util.List;
 
 public interface PortfolioHistoricalValueRepository extends JpaRepository<PortfolioValue, Long> {
     @Query(value = """
-           SELECT p FROM PortfolioValue p WHERE p.portfolioId = :portfolioId AND p.userId = :userId
+           SELECT p FROM PortfolioValue p WHERE p.portfolioId = :portfolioId AND p.userId = :userId ORDER BY p.date ASC 
        """)
     List<PortfolioValue> getPortfolioHistoricals(@Param("portfolioId") String portfolioId, @Param("userId") String userId);
 }

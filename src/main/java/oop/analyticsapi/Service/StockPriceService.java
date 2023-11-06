@@ -31,8 +31,7 @@ public class StockPriceService implements StockPriceInterface {
     }
 
     @Override
-    public List<StockDailyPriceEntity> getStockHistoricals(String symbol, LocalDate from, Integer days) {
-        LocalDate minusDate = from.minusDays(days);
-        return stockDailyPriceRepository.getStockHistoricals(symbol, from, minusDate);
+    public List<StockDailyPriceEntity> getStockHistoricals(String symbol, LocalDate end, LocalDate start) {
+        return stockDailyPriceRepository.getStockHistoricals(symbol, end, start);
     }
 }

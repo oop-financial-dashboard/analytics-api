@@ -15,6 +15,7 @@ import java.time.LocalDate;
 @Entity
 @IdClass(PortfolioId.class)
 @Table(name = "portfolio")
+//@Table(name = "dick")
 public class PortfolioEntity {
     @Id
     @Column(name = "user_id")

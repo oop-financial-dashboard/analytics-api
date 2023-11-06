@@ -13,6 +13,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class StockPriceHistoricals {
     private String symbol;
-    private LocalDate from;
-    private Integer days;
+    private LocalDate end;
+    private LocalDate start;
 }

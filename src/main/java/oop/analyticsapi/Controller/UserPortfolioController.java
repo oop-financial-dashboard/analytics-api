@@ -1,5 +1,6 @@
 package oop.analyticsapi.Controller;
 
+import oop.analyticsapi.Domain.Models.PortfolioAggregatedHistoricals;
 import oop.analyticsapi.Domain.Models.PortfolioHistorical;
 import oop.analyticsapi.Domain.Models.RequestBody.CreatePortfolioBody;
 import oop.analyticsapi.Domain.Models.RequestBody.DeletePortfolioBody;
@@ -88,9 +89,9 @@ public class UserPortfolioController {
 
     @GetMapping("/portfolio/get-historicals/{userId}/{portfolioId}")
     public ResponseEntity<PortfolioHistoricals> getPortfolioHistoricals(@PathVariable String userId, @PathVariable String portfolioId) {
-        List<PortfolioValue> result = userPortfolioService.getPortfolioHistoricals(portfolioId, userId);
+        List<PortfolioAggregatedHistoricals> result = userPortfolioService.getPortfolioHistoricals(portfolioId, userId);
         List<List<Object>> temp = new ArrayList<>();
-        for (PortfolioValue pv : result) {
+        for (PortfolioAggregatedHistoricals pv : result) {
             ZonedDateTime zonedDateTime = pv.getDate().atStartOfDay(ZoneId.of("UTC"));
             // Get the epoch timestamp in seconds
             long epochTimestamp = zonedDateTime.toInstant().toEpochMilli();
