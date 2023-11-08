@@ -1,5 +1,6 @@
 package oop.analyticsapi.Controller;
 
+import jakarta.ws.rs.Path;
 import oop.analyticsapi.Domain.Models.RequestBody.StockPrice;
 import oop.analyticsapi.Domain.Models.RequestBody.StockPriceHistoricals;
 import oop.analyticsapi.Entity.StockDailyPrice.StockDailyPriceEntity;
@@ -52,5 +53,9 @@ public class StockController {
     @GetMapping("/stock/available-stocks")
     public ResponseEntity<List<StockListing>> getAvailableStocks() {
         return ResponseEntity.ok(stockListingService.getAvailableStocks());
+    }
+    @GetMapping("/stock/latest-stock-price/{symbol}")
+    public ResponseEntity<StockDailyPriceEntity> getLatestStockPrice(@PathVariable String symbol) {
+        return ResponseEntity.ok(stockPriceService.getLatestStockPrice(symbol));
     }
 }

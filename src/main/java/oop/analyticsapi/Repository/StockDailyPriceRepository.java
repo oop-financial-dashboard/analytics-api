@@ -17,6 +17,11 @@ public interface StockDailyPriceRepository extends JpaRepository<StockDailyPrice
                                                                @Param("timestamp") LocalDate timestamp);
 
     @Query("""
+        SELECT s FROM StockDailyPriceEntity s WHERE s.symbol = :symbol order by s.timestamp desc limit 1
+    """)
+    StockDailyPriceEntity getLatestStockPrice(@Param("symbol") String symbol);
+
+    @Query("""
         SELECT s FROM StockDailyPriceEntity s WHERE s.symbol = :symbol AND s.timestamp <= :end AND s.timestamp >= :start
         ORDER BY s.timestamp ASC
     """)

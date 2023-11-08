@@ -34,4 +34,9 @@ public class StockPriceService implements StockPriceInterface {
     public List<StockDailyPriceEntity> getStockHistoricals(String symbol, LocalDate end, LocalDate start) {
         return stockDailyPriceRepository.getStockHistoricals(symbol, end, start);
     }
+
+    @Override
+    public StockDailyPriceEntity getLatestStockPrice(String symbol) {
+        return stockDailyPriceRepository.getLatestStockPrice(symbol);
+    }
 }
