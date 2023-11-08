@@ -13,7 +13,6 @@ import java.time.LocalDate;
 @Entity
 @IdClass(UserPortfolioId.class)
 @Table(name = "user_portfolio")
-//@Table(name = "urnan")
 public class UserPortfolioEntity {
 
     @Id

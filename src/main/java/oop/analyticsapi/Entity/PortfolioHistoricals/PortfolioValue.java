@@ -16,7 +16,6 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Entity
 @IdClass(PortfolioValueId.class)
-//@Table(name = "portfolio_historicals")
 @Table(name = "portfolio_historicals")
 public class PortfolioValue {
     @Id
