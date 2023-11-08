@@ -24,8 +24,8 @@ public class StockPriceService implements StockPriceInterface {
         LocalDate today = LocalDate.now();
         if (today.equals(timestamp)) {
             //minus 1 day bc we dh current day data
-            LocalDate oneDayEarlier = timestamp.minusDays(1);
-            return stockDailyPriceRepository.getStockDailyPriceBySymbol(symbol, oneDayEarlier);
+//            LocalDate oneDayEarlier = timestamp.minusDays(1);
+            return stockDailyPriceRepository.getStockDailyPriceBySymbol(symbol, timestamp);
         }
         return stockDailyPriceRepository.getStockDailyPriceBySymbol(symbol, timestamp);
     }
