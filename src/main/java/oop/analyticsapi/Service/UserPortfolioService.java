@@ -119,13 +119,12 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
                                   String description, Double initialCapital, LocalDate editedAt) {
         String res = "Success";
         //Update description and capital first
-        if (initialCapital != null && description != null) {
-            try {
-                res = userPortfolio.updateUserPortfolio(userId, portfolioId, initialCapital, description);
-            } catch(SQLException e) {
-                logger.info("SQL Exception: " + e.getMessage());
-            }
+        try {
+            res = userPortfolio.updateUserPortfolio(userId, portfolioId, initialCapital, description);
+        } catch (SQLException e) {
+            logger.info("SQL Exception: " + e.getMessage());
         }
+
         //Process updates
         ActionEnum actionEnum = ActionEnum.getActionFromString(action);
         switch (actionEnum) {
@@ -135,7 +134,7 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
                 task.calculateCompletePortfolioValue();
             }
             case Remove -> {
-                for (Stock stock: stocks) {
+                for (Stock stock : stocks) {
                     //Put in cache to update historicals
                     //Make a query to when this stock was added to the db
                     LocalDate dateAdded = portfolioRepository.getOneStockInfo(userId, portfolioId, stock.getSymbol()).getDateAdded();
@@ -160,32 +159,32 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
                 task.processHistoricalUpdates();
             }
             case Increase -> {
-                    //Get new price
-                    for (Stock stock : stocks) {
-                        try {
-                            portfolio.insertCache(
-                                    userId,
-                                    portfolioId,
-                                    stock.getQuantity(),
-                                    stock.getSymbol(),
-                                    stock.getPrice(),
-                                    0.0,
-                                    stock.getDateAdded(),
-                                    "Increase"
-                            );
-                        } catch (SQLException e) {
-                            logger.warn("Failed to insert to cache: " + e.getMessage());
-                        }
-                        double stockPrice = stock.getPrice();
-                        Triplet<Integer, Double, Double> data = recalculateAvgCost(userId, portfolioId, stock.getSymbol(), stock.getQuantity(), stockPrice);
-                        try {
-                            res = portfolio.updatePortfolioRecords(userId, portfolioId, data.getValue0(), stock.getSymbol(),
-                                    data.getValue1(), data.getValue2());
-                        } catch (SQLException e) {
-                            logger.warn("Something went wrong with updatePortfolioRecords");
-                        }
+                //Get new price
+                for (Stock stock : stocks) {
+                    try {
+                        portfolio.insertCache(
+                                userId,
+                                portfolioId,
+                                stock.getQuantity(),
+                                stock.getSymbol(),
+                                stock.getPrice(),
+                                0.0,
+                                stock.getDateAdded(),
+                                "Increase"
+                        );
+                    } catch (SQLException e) {
+                        logger.warn("Failed to insert to cache: " + e.getMessage());
                     }
-                    task.processHistoricalUpdates();
+                    double stockPrice = stock.getPrice();
+                    Triplet<Integer, Double, Double> data = recalculateAvgCost(userId, portfolioId, stock.getSymbol(), stock.getQuantity(), stockPrice);
+                    try {
+                        res = portfolio.updatePortfolioRecords(userId, portfolioId, data.getValue0(), stock.getSymbol(),
+                                data.getValue1(), data.getValue2());
+                    } catch (SQLException e) {
+                        logger.warn("Something went wrong with updatePortfolioRecords");
+                    }
+                }
+                task.processHistoricalUpdates();
             }
         }
         return res;
@@ -197,7 +196,7 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
         Map<LocalDate, List<PortfolioValue>> unsortedMap = new HashMap<>();
         List<PortfolioAggregatedHistoricals> res = new ArrayList<>();
         //Arrange into a sorted map by date
-        for (PortfolioValue p: pf) {
+        for (PortfolioValue p : pf) {
             if (unsortedMap.containsKey(p.getDate())) {
                 unsortedMap.get(p.getDate()).add(p);
             } else {
@@ -210,16 +209,16 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
         for (Map.Entry<LocalDate, List<PortfolioValue>> item : sortedMap.entrySet()) {
             double totalValue = 0.0;
 
-            for (PortfolioValue val: item.getValue()) {
+            for (PortfolioValue val : item.getValue()) {
                 totalValue += val.getValue();
             }
             res.add(
                     PortfolioAggregatedHistoricals.builder()
-                    .date(item.getKey())
-                    .value(totalValue)
-                    .portfolioId(portfolioId)
-                    .userId(userId)
-                    .build()
+                            .date(item.getKey())
+                            .value(totalValue)
+                            .portfolioId(portfolioId)
+                            .userId(userId)
+                            .build()
             );
         }
         return res;
@@ -235,7 +234,7 @@ public class UserPortfolioService implements UserPortfolioServiceInterface {
             double totalValue = price * quantity;
             LocalDate dateAdded = stock.getDateAdded();
             try {
-                portfolio.createPortfolioRecord(userId,portfolioId, quantity, symbol, price, totalValue, dateAdded);
+                portfolio.createPortfolioRecord(userId, portfolioId, quantity, symbol, price, totalValue, dateAdded);
             } catch (Exception e) {
                 logger.warn("Double parse error!");
                 return "Failed";
