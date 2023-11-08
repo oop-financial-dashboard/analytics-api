@@ -20,6 +20,7 @@ public class StockDescriptionEntity {
     private String currency;
     private String assetType;
     private String name;
+    @Column(columnDefinition = "TEXT")
     private String description;
     private String country;
     private String sector;
